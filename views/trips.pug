@@ -1,0 +1,152 @@
+extends layout
+include ./seat.pug
+
+
+block css
+  link(rel='stylesheet' href='/css/trips.css')
+
+block content
+    .gender-pick.border
+        .d-flex.gap-3
+            .m
+                img(src="/svg/man.svg" alt="koltuk")
+                |ERKEK
+            .f
+                img(src="/svg/woman.svg" alt="koltuk")
+                |KADIN
+    .container
+        .card.rounded-4.p-4.m-3
+            form#searchForm.d-flex.flex-wrap.gap-3.align-items-end
+                // KALKIŞ
+                .flex-grow-1.minw-200
+                    label.form-label(for="from") Kalkış
+                    select.form-select#from(required)
+                        option(disabled selected value="") Şehir seç
+                        each c in cities
+                            option(value=c.placeId)= c.title
+                // VARIŞ
+                .flex-grow-1.minw-200
+                    label.form-label(for="to") Varış
+                    select.form-select#to(required)
+                        option(disabled selected value="") Şehir seç
+                        each c in cities
+                            option(value=c.placeId)= c.title
+                // TARİH
+                .flex-grow-1.minw-200
+                    label.form-label(for="date") Tarih
+                    .input-group
+                        input.form-control#date(type="text" required placeholder="GG.AA.YYYY")
+                        span.input-group-text
+                            i.bi.bi-calendar3
+                // BUGÜN - YARIN
+                .d-flex.flex-column.gap-1
+                    .d-flex.gap-1
+                        button.btn.btn-outline-secondary.today(type="button") Bugün
+                        button.btn.btn-outline-secondary.tomorrow(type="button") Yarın
+                    // ARA
+                    button.btn.btn-primary.btn-lg(type="submit") Sefer Ara
+        .p-3.d-flex.flex-column.gap-3
+            each t in trips
+                .trip.gtr-card(
+                    data-trip-id=(t.tripId || t.id)
+                    data-from-stop-id=t.fromStopId
+                    data-to-stop-id=t.toStopId
+                    data-firm=t.firm
+                    data-price=t.price
+                    data-departure-time=t.time
+                    data-duration=t.duration
+                )
+                    .trip_chevron
+                        i.fa-solid.fa-chevron-down
+                    .trip-header.d-flex.justify-content-between.align-items-center.px-3.mb-2
+                        .trip-times.d-flex.justify-content-center
+                            .d-flex.flex-column.align-items-center
+                                span.trip_time
+                                    i.fa-solid.fa-clock.me-1
+                                    span #{t.time}
+                                span #{t.duration}
+                        .trip-route-title.d-flex.justify-content-center
+                            p.trip_route
+                                |#{t.fromStr}
+                                i.fa-solid.fa-route.mx-1
+                                |#{t.toStr}
+                        .trip-fullness-container.d-flex.justify-content-center
+                            .d-flex.gap-3.align-items-center
+                                .trip_fullness
+                                    i.fa-solid.fa-ticket.me-1
+                                    span #{t.price || 0}₺
+                        .d-flex.justify-content-center.trip-actions
+                            button.btn.btn-primary.btn-sm.trip_pick-button KOLTUK SEÇ
+                    .trip_content
+                        if Array.isArray(t.busFeatures) && t.busFeatures.length
+                            .trip_features.d-flex.justify-content-center.gap-3
+                                each feature in t.busFeatures
+                                    .trip_feature(tabindex="0" title=feature.label data-feature=feature.key)
+                                        img(src=feature.icon alt=feature.label)
+                                        span=feature.label
+                        .trip-content_inner.d-flex.mt-3
+                            .trip-description
+                                p.trip-description_header.text-center(role="button" tabindex="0" aria-expanded="false")
+                                    b Sefer Açıklaması
+                                .trip-description_body
+                                    p.text-center #{t.routeDescription}
+                                    if Array.isArray(t.routeTimeline) && t.routeTimeline.length
+                                        ul.trip_route-list.list-unstyled.mt-3
+                                            each stopInfo in t.routeTimeline
+                                                if stopInfo && stopInfo.time && stopInfo.title
+                                                    li
+                                                        b #{stopInfo.time}
+                                                        |#{" - "} #{stopInfo.title}
+                                                else if stopInfo && stopInfo.title
+                                                    li #{stopInfo.title}
+                            .trip-seat-plan
+                                .trip_seat-plan.d-flex.justify-content-center.gap-1
+                                    - const planBinary = t.busPlanBinary
+                                    - const plan = t.busPlan
+                                    - var index = 0
+                                    - var seat = 1
+                                    - for (let i = 0; i < 8; i++) {
+                                        - const row = planBinary.slice(i * 5, (i + 1) * 5)
+                                        - const rowHasSeat = row.includes("1")
+                                        if rowHasSeat
+                                            .d-flex.flex-column-reverse.gap-1
+                                                - for (let j = 0; j < 5; j++) {
+                                                    if planBinary[index] == "1"
+                                                        - const genderColor = t.tickets[seat] ? (t.tickets[seat].gender == "m" ? "#2986cc" : "#c90076") : "#fff"
+                                                        - const genderColorStroke = t.tickets[seat] ? (t.tickets[seat].gender == "m" ? "#216396" : "#920256") : "#b4b4b4"
+                                                        - const genderColorText = t.tickets[seat] ? (t.tickets[seat].gender == "m" ? "#1a4f77" : "#720042") : "#1f1f1f"
+                                                        .trip_seat(
+                                                            data-is-available=`${t.tickets[seat] ? false : true}`
+                                                            data-seat-number=`${plan[index]}`
+                                                            data-trip=(t.tripId || t.id)
+                                                        )
+                                                            +seat(genderColor, genderColorStroke)
+                                                            span(style=`position:absolute;top:50%;left:45%;transform:translate(-50%, -50%);color:${genderColorText}`) #{plan[index]}
+                                                        - seat++;
+                                                    else
+                                                        svg(viewBox="0 0 100 100" width="2.75rem" height="2.75rem" style=`visibility:hidden;${(index+1)%5==0?"display:none;":""}`)
+                                                    - index++;
+                                                - }
+                                    - }
+                            .trip-seat-info
+                                .trip_info.p-1
+                                    .trip_info_inner.d-flex
+                                        .trip-seat-info-item.d-flex.align-items-center.gap-1
+                                            +seat("#2986cc","#216396")
+                                            span Dolu Erkek Koltuk
+                                        .trip-seat-info-item.d-flex.align-items-center.gap-1
+                                            +seat("#c90076","#920256")
+                                            span Dolu Kadın Koltuk
+                                        .trip-seat-info-item.d-flex.align-items-center.gap-1
+                                            +seat("#fff","#b4b4b4")
+                                            span Boş Koltuk
+                                        .trip-seat-info-item.d-flex.align-items-center.gap-1
+                                            +seat("#02ff89","#00c76a")
+                                            span Seçilen Koltuk
+                                    p.trip_info-selection.text-center.fw-semibold(
+                                        data-placeholder="Koltuk seçimi yapın."
+                                    ) Koltuk seçimi yapın.
+                                    button.trip_confirm-button.btn.btn-sm.btn-primary.mt-2 Onayla
+
+block js
+  script(src="/js/trips.js")

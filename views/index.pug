@@ -18,28 +18,22 @@ block content
                 .col-lg-5
                     .card.shadow-lg.rounded-4.p-4
                         h1.h4.mb-3 Yolculuğa Başlayın!
-                        form#searchForm
-                            //- // Sekmeler
-                            //- .btn-group.mb-3.w-100(role="group" aria-label="Yön tipi")
-                            //-     input#oneWay.btn-check(type="radio" name="tripType" value="oneway" checked)
-                            //-     label.btn.btn-outline-primary(for="oneWay") Tek Yön
-                            //-     input#roundTrip.btn-check(type="radio" name="tripType" value="round")
-                            //-     label.btn.btn-outline-primary(for="roundTrip") Gidiş-Dönüş
+                        #searchForm
                             .row.g-2.mb-3
                                 .col-md-6
                                     label.form-label(for="from") Kalkış
                                     .searchable-select
                                         select.form-select#from(required)
-                                            option(value="") Seçiniz
+                                            //- option(value="") Seçiniz
                                             each c in cities
-                                                option(value=c)= c
+                                                option(value=c.placeId)= c.title
                                 .col-md-6
                                     label.form-label(for="to") Varış
                                     .searchable-select
                                         select.form-select#to(required)
-                                            option(value="") Seçiniz
+                                            //- option(value="") Seçiniz
                                             each c in cities
-                                                option(value=c)= c
+                                                option(value=c.placeId)= c.title
                             .row.g-2.mb-3
                                 .col-md-8
                                     label.form-label(for="date") Tarih
@@ -105,27 +99,21 @@ block content
                 h2 Popüler Seferler
                 p.text-muted En çok tercih edilen güzergahlar
             .row.g-4
-                each s, idx in popular
-                    .col-md-6.col-lg-4
-                        .card.shadow-sm.h-100.card-pop
-                            .card-body.d-flex.flex-column
-                                .d-flex.align-items-center.mb-3
-                                    .flex-shrink-0
-                                        .icon-box.rounded-circle.d-flex.align-items-center.justify-content-center
-                                            i.bi.bi-bus-front.fs-4.text-white
-                                    .ms-3
-                                        .fw-bold.fs-5= s.from + ' → ' + s.to
-                                .row.mt-auto.align-items-end
-                                    .col
-                                        small.text-muted Yaklaşık 6 saat
-                                        div
-                                            i.bi.bi-calendar3.me-1
-                                            small 22 Eki 2025
-                                    .col-auto
-                                        .price-box.p-2.px-3.rounded-pill
-                                            .fw-bold= s.price + ' ₺'
-                                .d-grid.mt-3
-                                    button.btn.btn-primary Bilet Al
+                if popularTrips
+                    each pt, idx in popularTrips
+                        .col-md-6.col-lg-4
+                            .card.shadow-sm.h-100.card-pop
+                                .card-body.d-flex.flex-column.position-relative
+                                    .price-box.p-2.px-3.rounded-pill
+                                        .fw-bold= pt.price + ' ₺'
+                                    .d-flex.align-items-center.mb-3
+                                        .flex-shrink-0
+                                            .icon-box.rounded-circle.d-flex.align-items-center.justify-content-center
+                                                i.bi.bi-bus-front.fs-4.text-white
+                                        .ms-3
+                                            .fw-bold.fs-5= pt.fromStr + ' → ' + pt.toStr
+                                    .d-grid
+                                        button.btn.btn-primary Bilet Al
 
     // 7) VARIŞ NOKTALARI CHİP
     section.py-5.bg-light
@@ -136,7 +124,7 @@ block content
                     a.btn.btn-outline-primary.btn-sm(href="#")= d
 
     // 8) ÜYELİK CTA BANNER
-    section.py-5.bg-primary.text-white
+    section.py-5.gtr-bg-secondary.text-white
         .container
             .row.align-items-center
                 .col-md-7.mb-4.mb-md-0
@@ -145,7 +133,7 @@ block content
                 .col-md-5.text-md-end
                     form.d-flex.flex-column.flex-sm-row.gap-2
                         input.form-control(type="email" placeholder="E-posta adresiniz")
-                        button.btn.btn-light(type="submit") Üye Ol
+                        button.btn.btn-primary(type="submit") Üye Ol
 
     // 9) SSS ACCORDION
     section.py-5

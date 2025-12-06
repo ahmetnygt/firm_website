@@ -1,48 +1,63 @@
+require('dotenv').config({ path: require('path').resolve(process.cwd(), '.env') });
 const express = require('express');
 const path = require('path');
+const { connectDbs, firmDb, goturDb } = require('./utilities/db.js');
+const initModels = require('./utilities/initModels.js');
+const indexRoute = require('./routes/index.js');
+
 const app = express();
 const PORT = process.env.PORT || 5000;
+const tenantKey = 'anafartalar';
+app.locals.tenantKey = tenantKey;
 
-// Tenant conf
-const tenant = {
-    slug: 'corutr',
-    name: 'Çortur',
-    primaryColor: '#f15a24',
-    accentColor: '#004d7a',
-    logo: '/images/logo.png',
-    phone: '0 (549) 790 00 17',
-    apiBase: 'https://api.example.com/anafartalar',
-    isGooglePlay: true,
-    isAppStore: true,
-};
-
+// Express ayarları
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-// Mock data
-const cities = ['Çanakkale', 'İstanbul', 'Bursa', 'İzmir', 'Ankara'];
-const popular = [
-    { from: 'Çanakkale', to: 'İstanbul', price: 1100 },
-    { from: 'Çanakkale', to: 'Bursa', price: 599 },
-    { from: 'İstanbul', to: 'Ankara', price: 450 },
-    { from: 'İzmir', to: 'Çanakkale', price: 750 }
-];
-const steps = [
-    { icon: 'bi-geo-alt', title: 'Güzergah Seçin' },
-    { icon: 'bi-calendar-date', title: 'Tarih Belirleyin' },
-    { icon: 'bi-credit-card', title: 'Ödeme Yapın' },
-    { icon: 'bi-qr-code', title: 'Biletinizi Alın' }
-];
-const destinations = ['Çanakkale', 'İstanbul', 'Bursa', 'İzmir', 'Ankara', 'Gelibolu', 'Beylikdüzü'];
-const faq = [
-    { q: 'Bileti nasıl alabilirim?', a: '4 adımda online olarak satın alabilirsiniz.' },
-    { q: 'İptal süreci nedir?', a: 'Kalkışa 24 saat kala ücretsiz iptal.' },
-    { q: 'Yolculuk süresi?', a: 'Rota ve trafiğe göre değişir, ortalama 6 saat.' },
-    { q: 'Evcil hayvan kabulü?', a: 'Küçük boy köpekler taşıma kabul edilir.' }
-];
+// Tenant bilgisi yükleme fonksiyonu
+async function loadTenantInfo(tenantKey, goturDb) {
+    try {
+        const [rows] = await goturDb.query(
+            'SELECT * FROM Firms WHERE `key` = ? LIMIT 1',
+            { replacements: [tenantKey] }
+        );
 
-app.get('/', (req, res) => res.render('index', { tenant, cities, popular, steps, destinations, faq }));
-app.get('/search', (req, res) => res.json({ query: req.query, result: [] })); // simülasyon
+        if (!rows || rows.length === 0) return null;
+        const firm = rows[0];
 
-app.listen(PORT, () => console.log(`Running http://localhost:${PORT}`));
+        return {
+            slug: firm.key,
+            name: firm.displayName,
+            primaryColor: firm.primaryColor || '#2660ff',
+            accentColor: firm.accentColor || '#004d7a',
+            logo: 'logo.png',
+            phone: firm.phone || null,
+            isGooglePlay: firm.isGooglePlay || false,
+            isAppStore: firm.isAppStore || false,
+        };
+    } catch (err) {
+        console.error('❌ Tenant bilgisi alınamadı:', err.message);
+        return null;
+    }
+}
+
+// Başlat
+(async () => {
+    await connectDbs();
+
+    const tenant = await loadTenantInfo(tenantKey, goturDb);
+    app.locals.tenant = tenant || { name: 'Bilinmeyen Firma' };
+
+    const firmModels = initModels(firmDb);
+    app.locals.models = firmModels;
+    app.locals.goturDb = goturDb;
+
+    app.use('/', indexRoute);
+
+    app.listen(PORT, () => {
+        console.log(`🚍 ${tenant?.name || tenantKey} aktif: http://localhost:${PORT}`);
+    });
+})();

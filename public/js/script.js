@@ -1,68 +1,89 @@
-// main.js
+// =============================
+//  G T R   H O M E   S E A R C H
+// =============================
 
 // Elementler
 const todayBtn = document.querySelector('.today');
 const tomorrowBtn = document.querySelector('.tomorrow');
 const dateInput = document.getElementById('date');
-const searchForm = document.getElementById('searchForm');
+const searchButton = document.querySelector("#searchForm button[type='submit']");
+const fromSelect = document.getElementById("from");
+const toSelect = document.getElementById("to");
 
-// Flatpickr başlatma (tek örnek)
+// =============================
+// FLATPICKR (DÜZELTİLMİŞ)
+// =============================
+
 const fp = flatpickr(dateInput, {
-  locale: 'tr',               // Türkçe
-  dateFormat: 'd.m.Y',        // Görünen format
-  altInput: false,            // alternatif input istemiyorsak false
+  locale: 'tr',
+
+  // 👇 Kullanıcıya görünen format
+  altInput: true,
+  altFormat: "d.m.Y",
+
+  // 👇 Gerçek input value
+  dateFormat: "Y-m-d",
+
   allowInput: true,
   minDate: 'today',
-  clickOpens: true,
-  defaultDate: "today",
-  wrap: false,                // input wrap değil, doğrudan input kullanılıyor
-  onReady(selectedDates, dateStr, instance) {
-    // Eğer input başlangıçta boşsa bir değer atamak istemezsek burayı boş bırak.
-    // İstersen default set için uncomment:
-    // if (!instance.input.value) instance.setDate(new Date(), false);
-  }
+  defaultDate: "today"
 });
 
-// Hızlı tarih butonları - flatpickr instance kullanarak ayarla
+// =============================
+// BUGÜN – YARIN TUŞLARI
+// =============================
 if (todayBtn) {
-  todayBtn.addEventListener('click', (e) => {
+  todayBtn.addEventListener("click", (e) => {
     e.preventDefault();
-    fp.setDate(new Date(), true); // ikinci arg true -> input güncellenir, change event tetiklenir
-    // fp.open(); // istersen buton tıklayınca takvim açılmasını sağlayabilirsin
+    fp.setDate(new Date(), true);
   });
 }
 
 if (tomorrowBtn) {
-  tomorrowBtn.addEventListener('click', (e) => {
+  tomorrowBtn.addEventListener("click", (e) => {
     e.preventDefault();
     const d = new Date();
     d.setDate(d.getDate() + 1);
     fp.setDate(d, true);
-    // fp.open();
   });
 }
 
-// Sefer ara - form submit
-if (searchForm) {
-  searchForm.addEventListener('submit', async (e) => {
+// =============================
+// AYNI ŞEHİR SEÇİLEMEZ
+// =============================
+function validateDifferentCities() {
+  const from = fromSelect?.value;
+  const to = toSelect?.value;
+
+  if (from && to && from === to) {
+    alert("Kalkış ve varış aynı şehir olamaz!");
+    return false;
+  }
+  return true;
+}
+
+fromSelect?.addEventListener("change", validateDifferentCities);
+toSelect?.addEventListener("change", validateDifferentCities);
+
+// =============================
+// ARA BUTONU
+// =============================
+if (searchButton) {
+  searchButton.addEventListener("click", async (e) => {
     e.preventDefault();
-    // FormData doğrudan date inputun güncellenmiş değerini alır
-    const formData = new FormData(searchForm);
 
-    // flatpickr inputu bazı durumlarda boş olabilir; güvenlik için fp.input.value'yu da al
-    if (!formData.get('date') && fp && fp.input) {
-      formData.set('date', fp.input.value);
+    const from = fromSelect?.value;
+    const to = toSelect?.value;
+    const date = dateInput.value; // 👈 GERÇEK FORMAT: 2025-11-22
+
+    if (!from || !to || !date) {
+      alert("Lütfen kalkış, varış ve tarih seçin.");
+      return;
     }
 
-    const params = new URLSearchParams(formData).toString();
-    try {
-      const res = await fetch('/search?' + params, { method: 'GET' });
-      // Eğer backend json dönüyorsa:
-      const json = await res.json();
-      console.log('Search response:', json);
-      // TODO: listeleme/sonuç sayfasına yönlendirme veya sonuç gösterimi burada yapılır.
-    } catch (err) {
-      console.error('Search error:', err);
-    }
+    if (!validateDifferentCities()) return;
+
+    // 🔥 Format artık doğru gidiyor: YYYY-MM-DD
+    window.location.href = `/trips?from=${from}&to=${to}&date=${date}`;
   });
 }
