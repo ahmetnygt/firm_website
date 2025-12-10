@@ -1,6 +1,6 @@
 :root {
-    --primary-color: #f15a24;
-    --accent-color: #004d7a;
+    --primary-color: #0088CC;
+    --accent-color: #D94E1E;
     --bg-color: #f8f9fa;
 }
 
@@ -114,8 +114,9 @@ a:focus,
 button:focus,
 input:focus,
 select:focus {
-    outline: 2px solid var(--primary-color) !important;
-    outline-offset: 2px;
+    /* outline: 2px solid var(--primary-color) !important;
+    outline-offset: 2px; */
+    outline: none;
 }
 
 /* Popüler sefer kart */
@@ -219,4 +220,52 @@ select:focus {
     padding: .5rem .75rem;
     color: #6c757d;
     font-size: .875rem
+}
+
+/* --- AUTH MODAL STYLES --- */
+.modal-content {
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.modal-header {
+    background: var(--primary-color) !important;
+    /* Sitenin ana rengini alır */
+}
+
+/* Input Group Focus Efekti */
+.modal-body .input-group:focus-within .input-group-text,
+.modal-body .input-group:focus-within .form-control {
+    border-color: var(--primary-color);
+    box-shadow: none;
+}
+
+.modal-body .input-group-text {
+    background-color: #f8f9fa;
+    border-right: none;
+}
+
+.modal-body .form-control:focus {
+    box-shadow: none;
+}
+
+/* Link Hover */
+.modal-body a:hover {
+    text-decoration: underline !important;
+}
+
+/* Ticket Card Styles */
+.ticket-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+}
+
+.ticket-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+}
+
+.ticket-card .badge {
+    font-weight: 500;
+    letter-spacing: 0.5px;
 }

@@ -1,6 +1,7 @@
 require('dotenv').config({ path: require('path').resolve(process.cwd(), '.env') });
 const express = require('express');
 const path = require('path');
+const cookieParser = require("cookie-parser")
 const { connectDbs, firmDb, goturDb } = require('./utilities/db.js');
 const initModels = require('./utilities/initModels.js');
 const indexRoute = require('./routes/index.js');
@@ -15,7 +16,21 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser())
 app.use(express.json());
+
+app.use((req, res, next) => {
+    if (req.cookies && req.cookies.user) {
+        try {
+            res.locals.user = JSON.parse(req.cookies.user);
+        } catch (e) {
+            res.locals.user = null;
+        }
+    } else {
+        res.locals.user = null;
+    }
+    next();
+});
 
 // Tenant bilgisi yükleme fonksiyonu
 async function loadTenantInfo(tenantKey, goturDb) {

@@ -188,7 +188,128 @@ exports.getPaymentPage = async (req, res) => {
 
 exports.paymentComplete = async (req, res) => {
     await axios.post(`${process.env.GOTUR_API_BASE_URL}/payment/${req.params.id}/complete`, {},
-        { headers: { "X-Api-Key": process.env.GOTUR_API_KEY, "X-Tenant-Key": process.env.GOTUR_TENANT_KEY } });
+        { headers: { "X-Api-Key": process.env.GOTUR_API_KEY, "X-Tenant-Key": process.env.GOTUR_TENANT_KEY } }).then(s => {
+            res.redirect("/success");
+        }).catch(e => { console.log(e) });
 
-    res.redirect("/success");
 }
+
+exports.login = async (req, res) => {
+    try {
+        const apiRes = await axios.post(`${process.env.GOTUR_API_BASE_URL}/auth/login`, req.body, {
+            headers: { "X-Api-Key": process.env.GOTUR_API_KEY, "X-Tenant-Key": process.env.GOTUR_TENANT_KEY }
+        });
+
+        if (apiRes.data.success) {
+            res.cookie('user', JSON.stringify(apiRes.data.user), { maxAge: 30 * 24 * 60 * 60 * 1000 });
+        }
+
+        res.json(apiRes.data);
+    } catch (e) {
+        res.status(e.response?.status || 500).json(e.response?.data || { error: "Login failed" });
+    }
+};
+
+exports.register = async (req, res) => {
+    try {
+        const apiRes = await axios.post(`${process.env.GOTUR_API_BASE_URL}/auth/register`, req.body, {
+            headers: { "X-Api-Key": process.env.GOTUR_API_KEY, "X-Tenant-Key": process.env.GOTUR_TENANT_KEY }
+        });
+
+        if (apiRes.data.success) {
+            // BAŞARILIYSA COOKIE OLUŞTUR
+            res.cookie('user', JSON.stringify(apiRes.data.user), { maxAge: 30 * 24 * 60 * 60 * 1000 });
+        }
+
+        res.json(apiRes.data);
+    } catch (e) {
+        res.status(e.response?.status || 500).json(e.response?.data || { error: "Register failed" });
+    }
+};
+
+exports.logout = (req, res) => {
+    res.clearCookie('user');
+    res.redirect('/');
+};
+
+exports.getProfilePage = async (req, res) => {
+    // Middleware sayesinde res.locals.user var mı bakıyoruz
+    const localUser = res.locals.user;
+    if (!localUser) return res.redirect("/"); // Giriş yapmamışsa anasayfaya
+
+    try {
+        // API'den en güncel veriyi çekelim (Cookie eski kalmış olabilir)
+        const apiRes = await axios.get(`${process.env.GOTUR_API_BASE_URL}/customer/${localUser.id}`, {
+            headers: { "X-Api-Key": process.env.GOTUR_API_KEY, "X-Tenant-Key": process.env.GOTUR_TENANT_KEY }
+        });
+
+        const freshUser = apiRes.data.user;
+
+        // Taze veriyi sayfaya gönder
+        res.render("profile", { user: freshUser });
+
+    } catch (err) {
+        console.error("PROFILE_PAGE_ERR:", err.message);
+        // Hata olursa cookie'deki ile idare et veya hata göster
+        res.render("profile", { user: localUser, error: "Güncel bilgiler çekilemedi." });
+    }
+};
+
+exports.updateProfile = async (req, res) => {
+    const localUser = res.locals.user;
+    if (!localUser) return res.status(401).json({ error: "Oturum kapalı." });
+
+    try {
+        // ID'yi güvenli şekilde cookie'den (session'dan) alıp body'ye ekliyoruz
+        const payload = { ...req.body, id: localUser.id };
+
+        const apiRes = await axios.post(`${process.env.GOTUR_API_BASE_URL}/customer/update`, payload, {
+            headers: { "X-Api-Key": process.env.GOTUR_API_KEY, "X-Tenant-Key": process.env.GOTUR_TENANT_KEY }
+        });
+
+        if (apiRes.data.success) {
+            // Cookie'yi de güncelle ki sayfa yenilenince eski isim kalmasın
+            res.cookie('user', JSON.stringify(apiRes.data.user), { maxAge: 30 * 24 * 60 * 60 * 1000 });
+        }
+
+        res.json(apiRes.data);
+
+    } catch (e) {
+        res.status(e.response?.status || 500).json(e.response?.data || { error: "Update failed" });
+    }
+};
+
+exports.getMyTicketsPage = async (req, res) => {
+    const localUser = res.locals.user;
+    if (!localUser) return res.redirect("/");
+
+    try {
+        // Kullanıcının TCKN'si ile biletleri çekiyoruz
+        // Eğer backend ID istiyorsa localUser.id, TCKN istiyorsa localUser.idNumber gönder
+        const apiRes = await axios.get(`${process.env.GOTUR_API_BASE_URL}/customer/${localUser.idNumber}/tickets`, {
+            headers: { "X-Api-Key": process.env.GOTUR_API_KEY, "X-Tenant-Key": process.env.GOTUR_TENANT_KEY }
+        });
+
+        const tickets = apiRes.data.tickets || [];
+
+        res.render("my-tickets", { user: localUser, tickets });
+
+    } catch (err) {
+        console.error("MY_TICKETS_ERR:", err.message);
+        res.render("my-tickets", { user: localUser, tickets: [], error: "Biletler yüklenemedi." });
+    }
+};
+
+exports.ticketAction = async (req, res) => {
+    const localUser = res.locals.user;
+    if (!localUser) return res.status(401).json({ error: "Oturum kapalı." });
+
+    try {
+        const apiRes = await axios.post(`${process.env.GOTUR_API_BASE_URL}/ticket/cancel`, req.body, {
+            headers: { "X-Api-Key": process.env.GOTUR_API_KEY, "X-Tenant-Key": process.env.GOTUR_TENANT_KEY }
+        });
+        res.json(apiRes.data);
+    } catch (e) {
+        res.status(500).json(e.response?.data || { error: "İşlem başarısız." });
+    }
+};

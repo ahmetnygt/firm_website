@@ -14,5 +14,15 @@ router.post('/payment/create', siteController.createPayment);
 router.get('/payment/:id', siteController.getPaymentPage);
 router.post("/payment/:id", siteController.paymentComplete);
 
+router.post("/login", siteController.login);
+router.post("/register", siteController.register);
+router.get("/logout", siteController.logout);
+
+router.get('/profile', siteController.getProfilePage);
+router.post('/profile/update', siteController.updateProfile);
+
+router.get('/my-tickets', siteController.getMyTicketsPage);
+router.post('/ticket/cancel', siteController.ticketAction);
+
 
 module.exports = router;
