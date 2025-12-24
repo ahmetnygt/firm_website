@@ -3,7 +3,6 @@ const axios = require("axios");
 
 exports.getHomePage = async (req, res) => {
     try {
-        // 1) Stop listesini API'den çek
         const stopRes = await axios.get(
             `${process.env.GOTUR_API_BASE_URL}/stops`,
             {
@@ -16,7 +15,6 @@ exports.getHomePage = async (req, res) => {
 
         const cities = stopRes.data.stops || [];
 
-        // 🔹 Popüler rotalar
         const popularPairs = [
             { fromPlaceId: 17000, toPlaceId: 34520 },
             { fromPlaceId: 17000, toPlaceId: 16000 },
@@ -31,7 +29,6 @@ exports.getHomePage = async (req, res) => {
 
             if (!from || !to) continue;
 
-            // 🔥 fiyatı şimdilik boş geçiyoruz
             popularTrips.push({
                 fromStr: from.title,
                 toStr: to.title,
@@ -39,19 +36,18 @@ exports.getHomePage = async (req, res) => {
             });
         }
 
-        // 🔹 Ek sayfa verileri
         const steps = [
-            { icon: "bi-geo-alt", title: "Güzergah Seçin" },
-            { icon: "bi-calendar-date", title: "Tarih Belirleyin" },
-            { icon: "bi-credit-card", title: "Ödeme Yapın" },
-            { icon: "bi-qr-code", title: "Biletinizi Alın" },
+            { icon: "bi-geo-alt", title: "Select Route" },
+            { icon: "bi-calendar-date", title: "Specify Date" },
+            { icon: "bi-credit-card", title: "Make Payment" },
+            { icon: "bi-qr-code", title: "Get Your Ticket" },
         ];
 
         const faq = [
-            { q: "Bileti nasıl alabilirim?", a: "4 adımda online olarak satın alabilirsiniz." },
-            { q: "İptal süreci nedir?", a: "Kalkışa 24 saat kala ücretsiz iptal." },
-            { q: "Yolculuk süresi?", a: "Rota ve trafiğe göre değişir, ortalama 6 saat." },
-            { q: "Evcil hayvan kabulü?", a: "Küçük boy köpekler taşıma kabul edilir." },
+            { q: "How can I buy a ticket?", a: "You can purchase online in 4 steps." },
+            { q: "What is the cancellation process?", a: "Free cancellation up to 24 hours before departure." },
+            { q: "What is the travel duration?", a: "Varies depending on route and traffic, approximately 6 hours." },
+            { q: "Are pets allowed?", a: "Small dogs are accepted for transport." },
         ];
 
         return res.render("index", {
@@ -63,7 +59,7 @@ exports.getHomePage = async (req, res) => {
         });
 
     } catch (err) {
-        console.error("❌ Homepage API hatası:", err.response?.data || err.message);
+        console.error("❌ Homepage API Error:", err.response?.data || err.message);
 
         return res.render("index", {
             cities: [],
@@ -91,11 +87,10 @@ exports.getTrips = async (req, res) => {
 
         if (!from || !to || !date) {
             return res.status(400).json({
-                error: "from, to ve date zorunludur."
+                error: "from, to, and date are required."
             });
         }
 
-        // 🔥 Götür TRIP SEARCH API
         const apiRes = await axios.get(
             `${process.env.GOTUR_API_BASE_URL}/trips/search`,
             {
@@ -109,7 +104,7 @@ exports.getTrips = async (req, res) => {
 
         const trips = apiRes.data?.trips || [];
 
-        console.log(trips.length + " adet trip bulundu.");
+        console.log(trips.length + " trips found.");
 
         return res.render("trips", {
             cities,
@@ -120,7 +115,7 @@ exports.getTrips = async (req, res) => {
         });
 
     } catch (err) {
-        console.log("🔥 getTrips API hatası:", err.response?.data || err.message);
+        console.log("🔥 getTrips API error:", err.response?.data || err.message);
 
         return res.render("trips", {
             cities: [],
@@ -151,7 +146,7 @@ exports.createPayment = async (req, res) => {
 
     } catch (err) {
         console.error("SITE_PAYMENT_CREATE_ERR:", err.response?.data || err);
-        return res.status(500).json({ error: "Payment API hatası" });
+        return res.status(500).json({ error: "Payment API error" });
     }
 };
 
@@ -181,18 +176,31 @@ exports.getPaymentPage = async (req, res) => {
 
     } catch (err) {
         return res.render("payment", {
-            error: "Ödeme sayfası yüklenemedi.",
+            error: "Payment page could not be loaded.",
         });
     }
 };
 
 exports.paymentComplete = async (req, res) => {
-    await axios.post(`${process.env.GOTUR_API_BASE_URL}/payment/${req.params.id}/complete`, {},
-        { headers: { "X-Api-Key": process.env.GOTUR_API_KEY, "X-Tenant-Key": process.env.GOTUR_TENANT_KEY } }).then(s => {
-            res.redirect("/success");
-        }).catch(e => { console.log(e) });
+    try {
+        const apiRes = await axios.post(
+            `${process.env.GOTUR_API_BASE_URL}/payment/${req.params.id}/complete`,
+            req.body,
+            {
+                headers: {
+                    "X-Api-Key": process.env.GOTUR_API_KEY,
+                    "X-Tenant-Key": process.env.GOTUR_TENANT_KEY
+                }
+            }
+        );
 
-}
+        return res.json(apiRes.data);
+
+    } catch (err) {
+        console.error("PAYMENT_COMPLETE_ERR:", err.response?.data || err.message);
+        return res.status(500).json({ error: "Payment could not be completed." });
+    }
+};
 
 exports.login = async (req, res) => {
     try {
@@ -217,7 +225,6 @@ exports.register = async (req, res) => {
         });
 
         if (apiRes.data.success) {
-            // BAŞARILIYSA COOKIE OLUŞTUR
             res.cookie('user', JSON.stringify(apiRes.data.user), { maxAge: 30 * 24 * 60 * 60 * 1000 });
         }
 
@@ -233,34 +240,29 @@ exports.logout = (req, res) => {
 };
 
 exports.getProfilePage = async (req, res) => {
-    // Middleware sayesinde res.locals.user var mı bakıyoruz
     const localUser = res.locals.user;
-    if (!localUser) return res.redirect("/"); // Giriş yapmamışsa anasayfaya
+    if (!localUser) return res.redirect("/");
 
     try {
-        // API'den en güncel veriyi çekelim (Cookie eski kalmış olabilir)
         const apiRes = await axios.get(`${process.env.GOTUR_API_BASE_URL}/customer/${localUser.id}`, {
             headers: { "X-Api-Key": process.env.GOTUR_API_KEY, "X-Tenant-Key": process.env.GOTUR_TENANT_KEY }
         });
 
         const freshUser = apiRes.data.user;
 
-        // Taze veriyi sayfaya gönder
         res.render("profile", { user: freshUser });
 
     } catch (err) {
         console.error("PROFILE_PAGE_ERR:", err.message);
-        // Hata olursa cookie'deki ile idare et veya hata göster
-        res.render("profile", { user: localUser, error: "Güncel bilgiler çekilemedi." });
+        res.render("profile", { user: localUser, error: "Could not fetch updated information." });
     }
 };
 
 exports.updateProfile = async (req, res) => {
     const localUser = res.locals.user;
-    if (!localUser) return res.status(401).json({ error: "Oturum kapalı." });
+    if (!localUser) return res.status(401).json({ error: "Session closed." });
 
     try {
-        // ID'yi güvenli şekilde cookie'den (session'dan) alıp body'ye ekliyoruz
         const payload = { ...req.body, id: localUser.id };
 
         const apiRes = await axios.post(`${process.env.GOTUR_API_BASE_URL}/customer/update`, payload, {
@@ -268,7 +270,6 @@ exports.updateProfile = async (req, res) => {
         });
 
         if (apiRes.data.success) {
-            // Cookie'yi de güncelle ki sayfa yenilenince eski isim kalmasın
             res.cookie('user', JSON.stringify(apiRes.data.user), { maxAge: 30 * 24 * 60 * 60 * 1000 });
         }
 
@@ -284,8 +285,6 @@ exports.getMyTicketsPage = async (req, res) => {
     if (!localUser) return res.redirect("/");
 
     try {
-        // Kullanıcının TCKN'si ile biletleri çekiyoruz
-        // Eğer backend ID istiyorsa localUser.id, TCKN istiyorsa localUser.idNumber gönder
         const apiRes = await axios.get(`${process.env.GOTUR_API_BASE_URL}/customer/${localUser.idNumber}/tickets`, {
             headers: { "X-Api-Key": process.env.GOTUR_API_KEY, "X-Tenant-Key": process.env.GOTUR_TENANT_KEY }
         });
@@ -296,13 +295,13 @@ exports.getMyTicketsPage = async (req, res) => {
 
     } catch (err) {
         console.error("MY_TICKETS_ERR:", err.message);
-        res.render("my-tickets", { user: localUser, tickets: [], error: "Biletler yüklenemedi." });
+        res.render("my-tickets", { user: localUser, tickets: [], error: "Tickets could not be loaded." });
     }
 };
 
 exports.ticketAction = async (req, res) => {
     const localUser = res.locals.user;
-    if (!localUser) return res.status(401).json({ error: "Oturum kapalı." });
+    if (!localUser) return res.status(401).json({ error: "Session closed." });
 
     try {
         const apiRes = await axios.post(`${process.env.GOTUR_API_BASE_URL}/ticket/cancel`, req.body, {
@@ -310,6 +309,6 @@ exports.ticketAction = async (req, res) => {
         });
         res.json(apiRes.data);
     } catch (e) {
-        res.status(500).json(e.response?.data || { error: "İşlem başarısız." });
+        res.status(500).json(e.response?.data || { error: "Operation failed." });
     }
 };

@@ -5,8 +5,8 @@ block content
         .row.justify-content-center
             .col-lg-10
                 .d-flex.align-items-center.justify-content-between.mb-4
-                    h2.fw-bold.mb-0 Biletlerim
-                    span.badge.bg-primary.rounded-pill= tickets.length + ' Adet'
+                    h2.fw-bold.mb-0 My Tickets
+                    span.badge.bg-primary.rounded-pill= tickets.length + " items"
 
                 if error
                     .alert.alert-danger= error
@@ -14,85 +14,85 @@ block content
                 if tickets.length === 0
                     .text-center.py-5
                         i.bi.bi-ticket-perforated.text-muted(style="font-size: 4rem;")
-                        h4.mt-3.text-muted Henüz biletiniz bulunmuyor.
-                        a.btn.btn-primary.mt-3(href="/search") Sefer Ara
+                        h4.mt-3.text-muted You don't have any tickets yet.
+                        a.btn.btn-primary.mt-3(href="/search") Search Trips
 
                 else
                     .row.g-3
                         each t in tickets
-                            //- Tarih Kontrolü (İptal butonu için)
-                            //- Backend'den gelen 't.trip.date' (YYYY-MM-DD) ve 't.trip.time' (HH:mm) birleştirip kontrol ediyoruz
-                            - const tripDateTime = new Date(t.trip.date + 'T' + t.trip.time);
+                            //- Date check (for the cancel button)
+                            //- Combine backend fields 't.trip.date' (YYYY-MM-DD) + 't.trip.time' (HH:mm)
+                            - const tripDateTime = new Date(t.trip.date + "T" + t.trip.time);
                             - const now = new Date();
                             - const isPast = tripDateTime < now;
-                            - const isActive = (t.status === 'completed' || t.status === 'web' || t.status === 'gotur' || t.status === 'reservation');
+                            - const isActive = (t.status === "completed" || t.status === "web" || t.status === "gotur" || t.status === "reservation");
 
                             .col-12
                                 .card.border-0.shadow-sm.ticket-card
                                     .card-body.p-0
                                         .d-flex.flex-column.flex-md-row
-                                            //- SOL KISIM: Sefer Bilgileri
+                                            //- LEFT: Trip details
                                             .p-4.flex-grow-1
                                                 .d-flex.justify-content-between.align-items-start.mb-3
                                                     div
                                                         span.badge.bg-light.text-dark.border.me-2 PNR: #{t.pnr}
-                                                        if t.status === 'reservation'
-                                                            span.badge.bg-warning.text-dark Rezervasyon
-                                                        else if t.status === 'canceled'
-                                                            span.badge.bg-danger İptal Edildi
-                                                        else if t.status === 'refund'
-                                                            span.badge.bg-secondary İade Edildi
+                                                        if t.status === "reservation"
+                                                            span.badge.bg-warning.text-dark Reservation
+                                                        else if t.status === "canceled"
+                                                            span.badge.bg-danger Canceled
+                                                        else if t.status === "refund"
+                                                            span.badge.bg-secondary Refunded
                                                         else
-                                                            span.badge.bg-success Satış
+                                                            span.badge.bg-success Purchased
 
-                                                    //- SAĞ ÜST: Üç Nokta Menüsü (Sadece aktif ve gelecekteki seferler için)
+                                                    //- TOP RIGHT: Three-dot menu (only for active & upcoming trips)
                                                     if isActive && !isPast
                                                         .dropdown
                                                             button.btn.btn-light.btn-sm.rounded-circle(type="button" data-bs-toggle="dropdown")
                                                                 i.bi.bi-three-dots-vertical
                                                             ul.dropdown-menu.dropdown-menu-end.shadow
-                                                                if t.status === 'reservation'
+                                                                if t.status === "reservation"
                                                                     li
                                                                         a.dropdown-item.text-danger.cancel-btn(href="#" data-id=t.id data-action="cancel")
                                                                             i.bi.bi-x-circle.me-2
-                                                                            | Rezervasyonu İptal Et
+                                                                            | Cancel Reservation
                                                                 else
                                                                     li
                                                                         a.dropdown-item.text-danger.cancel-btn(href="#" data-id=t.id data-action="refund")
                                                                             i.bi.bi-arrow-counterclockwise.me-2
-                                                                            | Bileti İade Et
+                                                                            | Request Refund
 
                                                 .d-flex.align-items-center.gap-4
                                                     .text-center
                                                         .fs-4.fw-bold= t.trip.time.substring(0,5)
-                                                        .small.text-muted= new Date(t.trip.date).toLocaleDateString('tr-TR')
+                                                        .small.text-muted= new Date(t.trip.date).toLocaleDateString("en-US")
 
                                                     .flex-grow-1.border-top.border-2.position-relative.my-3(style="border-style:dashed !important")
                                                         i.bi.bi-bus-front.position-absolute.top-0.start-50.translate-middle.bg-white.px-2.text-primary
 
                                                     .text-center(style="min-width: 100px;")
                                                         .fs-4.fw-bold= t.calculatedArrival
-                                                        .small.text-muted= new Date(t.trip.date).toLocaleDateString('tr-TR')
-                                                        //- .small.text-muted Varış
-                                                        //- .fw-bold= t.price + ' ₺'
-                                                        //- .small.text-muted Koltuk: #{t.seatNo}
+                                                        .small.text-muted= new Date(t.trip.date).toLocaleDateString("en-US")
+                                                        //- .small.text-muted Arrival
+                                                        //- .fw-bold= t.price + " ₺"
+                                                        //- .small.text-muted Seat: #{t.seatNo}
 
                                                 .d-flex.justify-content-between.mt-3
                                                     .d-flex.align-items-center.gap-2
                                                         i.bi.bi-geo-alt-fill.text-primary
-                                                        span.fw-medium= t.fromStopTitle || 'Kalkış'
+                                                        span.fw-medium= t.fromStopTitle || "Departure"
                                                     .d-flex.align-items-center.gap-2
                                                         i.bi.bi-geo-alt-fill.text-danger
-                                                        span.fw-medium= t.toStopTitle || 'Varış'
+                                                        span.fw-medium= t.toStopTitle || "Arrival"
 
-                                            //- SAĞ KISIM: Dekoratif veya QR (Opsiyonel)
+                                            //- RIGHT: Decorative / QR (optional)
                                             .bg-light.border-start.d-none.d-md-flex.flex-column.align-items-center.justify-content-center.p-4(style="min-width: 150px;")
                                                 .text-center
-                                                    .small.text-muted Koltuk No
+                                                    .small.text-muted Seat No
                                                     .fs-4.fw-bold= t.seatNo
                                                 .text-center
-                                                    .small.text-muted Tutar
-                                                    .fs-4.fw-bold.text-primary= t.price + ' ₺'
+                                                    .small.text-muted Amount
+                                                    .fs-4.fw-bold.text-primary= t.price + " ₺"
 
 block js
     script(src="/js/my-tickets.js")

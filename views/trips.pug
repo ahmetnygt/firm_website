@@ -1,50 +1,49 @@
 extends layout
 include ./seat.pug
 
-
 block css
-  link(rel='stylesheet' href='/css/trips.css')
+    link(rel='stylesheet' href='/css/trips.css')
 
 block content
     .gender-pick.border
         .d-flex.gap-3
             .m
-                img(src="/svg/man.svg" alt="koltuk")
-                |ERKEK
+                img(src="/svg/man.svg" alt="seat")
+                |MALE
             .f
-                img(src="/svg/woman.svg" alt="koltuk")
-                |KADIN
+                img(src="/svg/woman.svg" alt="seat")
+                |FEMALE
     .container
         .card.rounded-4.p-4.m-3
             form#searchForm.d-flex.flex-wrap.gap-3.align-items-end
-                // KALKIŞ
+                // DEPARTURE
                 .flex-grow-1.minw-200
-                    label.form-label(for="from") Kalkış
+                    label.form-label(for="from") Departure
                     select.form-select#from(required)
-                        option(disabled selected value="") Şehir seç
+                        option(disabled selected value="") Select a city
                         each c in cities
                             option(value=c.placeId)= c.title
-                // VARIŞ
+                // ARRIVAL
                 .flex-grow-1.minw-200
-                    label.form-label(for="to") Varış
+                    label.form-label(for="to") Arrival
                     select.form-select#to(required)
-                        option(disabled selected value="") Şehir seç
+                        option(disabled selected value="") Select a city
                         each c in cities
                             option(value=c.placeId)= c.title
-                // TARİH
+                // DATE
                 .flex-grow-1.minw-200
-                    label.form-label(for="date") Tarih
+                    label.form-label(for="date") Date
                     .input-group
-                        input.form-control#date(type="text" required placeholder="GG.AA.YYYY")
+                        input.form-control#date(type="text" required placeholder="DD.MM.YYYY")
                         span.input-group-text
                             i.bi.bi-calendar3
-                // BUGÜN - YARIN
+                // TODAY - TOMORROW
                 .d-flex.flex-column.gap-1
                     .d-flex.gap-1
-                        button.btn.btn-outline-secondary.today(type="button") Bugün
-                        button.btn.btn-outline-secondary.tomorrow(type="button") Yarın
-                    // ARA
-                    button.btn.btn-primary.btn-lg(type="submit") Sefer Ara
+                        button.btn.btn-outline-secondary.today(type="button") Today
+                        button.btn.btn-outline-secondary.tomorrow(type="button") Tomorrow
+                    // SEARCH
+                    button.btn.btn-primary.btn-lg(type="submit") Search Trips
         .p-3.d-flex.flex-column.gap-3
             each t in trips
                 .trip.gtr-card(
@@ -76,7 +75,7 @@ block content
                                     i.fa-solid.fa-ticket.me-1
                                     span #{t.price || 0}₺
                         .d-flex.justify-content-center.trip-actions
-                            button.btn.btn-primary.btn-sm.trip_pick-button KOLTUK SEÇ
+                            button.btn.btn-primary.btn-sm.trip_pick-button SELECT SEAT
                     .trip_content
                         if Array.isArray(t.busFeatures) && t.busFeatures.length
                             .trip_features.d-flex.justify-content-center.gap-3
@@ -87,7 +86,7 @@ block content
                         .trip-content_inner.d-flex.mt-3
                             .trip-description
                                 p.trip-description_header.text-center(role="button" tabindex="0" aria-expanded="false")
-                                    b Sefer Açıklaması
+                                    b Trip Details
                                 .trip-description_body
                                     p.text-center #{t.routeDescription}
                                     if Array.isArray(t.routeTimeline) && t.routeTimeline.length
@@ -133,20 +132,20 @@ block content
                                     .trip_info_inner.d-flex
                                         .trip-seat-info-item.d-flex.align-items-center.gap-1
                                             +seat("#2986cc","#216396")
-                                            span Dolu Erkek Koltuk
+                                            span Occupied (Male)
                                         .trip-seat-info-item.d-flex.align-items-center.gap-1
                                             +seat("#c90076","#920256")
-                                            span Dolu Kadın Koltuk
+                                            span Occupied (Female)
                                         .trip-seat-info-item.d-flex.align-items-center.gap-1
                                             +seat("#fff","#b4b4b4")
-                                            span Boş Koltuk
+                                            span Available
                                         .trip-seat-info-item.d-flex.align-items-center.gap-1
                                             +seat("#02ff89","#00c76a")
-                                            span Seçilen Koltuk
+                                            span Selected
                                     p.trip_info-selection.text-center.fw-semibold(
-                                        data-placeholder="Koltuk seçimi yapın."
-                                    ) Koltuk seçimi yapın.
-                                    button.trip_confirm-button.btn.btn-sm.btn-primary.mt-2 Onayla
+                                        data-placeholder="Select seats."
+                                    ) Select seats.
+                                    button.trip_confirm-button.btn.btn-sm.btn-primary.mt-2 Confirm
 
 block js
-  script(src="/js/trips.js")
+    script(src="/js/trips.js")

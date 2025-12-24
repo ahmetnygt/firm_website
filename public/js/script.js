@@ -2,35 +2,35 @@
 //  G T R   H O M E   S E A R C H
 // =============================
 
-// Elementler
-const todayBtn = document.querySelector('.today');
-const tomorrowBtn = document.querySelector('.tomorrow');
-const dateInput = document.getElementById('date');
+// Elements
+const todayBtn = document.querySelector(".today");
+const tomorrowBtn = document.querySelector(".tomorrow");
+const dateInput = document.getElementById("date");
 const searchButton = document.querySelector("#searchForm button[type='submit']");
 const fromSelect = document.getElementById("from");
 const toSelect = document.getElementById("to");
 
 // =============================
-// FLATPICKR (DÜZELTİLMİŞ)
+// FLATPICKR (FIXED)
 // =============================
 
 const fp = flatpickr(dateInput, {
-  locale: 'tr',
+  locale: "tr",
 
-  // 👇 Kullanıcıya görünen format
+  // 👇 Visible format for the user
   altInput: true,
   altFormat: "d.m.Y",
 
-  // 👇 Gerçek input value
+  // 👇 Actual input value format
   dateFormat: "Y-m-d",
 
   allowInput: true,
-  minDate: 'today',
-  defaultDate: "today"
+  minDate: "today",
+  defaultDate: "today",
 });
 
 // =============================
-// BUGÜN – YARIN TUŞLARI
+// TODAY – TOMORROW BUTTONS
 // =============================
 if (todayBtn) {
   todayBtn.addEventListener("click", (e) => {
@@ -49,14 +49,14 @@ if (tomorrowBtn) {
 }
 
 // =============================
-// AYNI ŞEHİR SEÇİLEMEZ
+// SAME CITY NOT ALLOWED
 // =============================
 function validateDifferentCities() {
   const from = fromSelect?.value;
   const to = toSelect?.value;
 
   if (from && to && from === to) {
-    alert("Kalkış ve varış aynı şehir olamaz!");
+    alert("Departure and arrival cannot be the same city!");
     return false;
   }
   return true;
@@ -66,7 +66,7 @@ fromSelect?.addEventListener("change", validateDifferentCities);
 toSelect?.addEventListener("change", validateDifferentCities);
 
 // =============================
-// ARA BUTONU
+// SEARCH BUTTON
 // =============================
 if (searchButton) {
   searchButton.addEventListener("click", async (e) => {
@@ -74,35 +74,35 @@ if (searchButton) {
 
     const from = fromSelect?.value;
     const to = toSelect?.value;
-    const date = dateInput.value; // 👈 GERÇEK FORMAT: 2025-11-22
+    const date = dateInput.value; // 👈 REAL FORMAT: 2025-11-22
 
     if (!from || !to || !date) {
-      alert("Lütfen kalkış, varış ve tarih seçin.");
+      alert("Please select departure, arrival, and date.");
       return;
     }
 
     if (!validateDifferentCities()) return;
 
-    // 🔥 Format artık doğru gidiyor: YYYY-MM-DD
+    // 🔥 Format is now correct: YYYY-MM-DD
     window.location.href = `/trips?from=${from}&to=${to}&date=${date}`;
   });
 }
 
 $(document).ready(function () {
-  // Navbar güncelleme fonksiyonu (checkAuthStatus) artık gereksiz, PUG hallediyor.
+  // The navbar update function (checkAuthStatus) is no longer needed, PUG handles it.
 
-  // 1. Giriş Yap Formu
+  // 1. Login Form
   $("#loginForm").on("submit", async function (e) {
     e.preventDefault();
 
     const btn = $(this).find('button[type="submit"]');
-    const spinner = btn.find('.spinner-border');
-    const textSpan = btn.find('.text-btn');
+    const spinner = btn.find(".spinner-border");
+    const textSpan = btn.find(".text-btn");
 
     const idNumber = $(this).find('[name="idNumber"]').val().trim();
     const password = $(this).find('[name="password"]').val();
 
-    // UI Kilitle
+    // Lock UI
     setLoading(btn, true);
 
     try {
@@ -110,22 +110,22 @@ $(document).ready(function () {
         url: "/login",
         type: "POST",
         contentType: "application/json",
-        data: JSON.stringify({ idNumber, password })
+        data: JSON.stringify({ idNumber, password }),
       });
 
       if (res.success) {
-        // Backend cookie'yi ayarladı, sayfayı yenilemek yeterli
+        // Backend already set the cookie, just reload the page
         window.location.reload();
       }
     } catch (err) {
-      let msg = err.responseJSON?.error || "Giriş yapılamadı.";
+      let msg = err.responseJSON?.error || "Login failed.";
       alert(msg);
     } finally {
       setLoading(btn, false);
     }
   });
 
-  // 2. Kayıt Ol Formu
+  // 2. Register Form
   $("#registerForm").on("submit", async function (e) {
     e.preventDefault();
 
@@ -138,11 +138,11 @@ $(document).ready(function () {
       idNumber: $(this).find('[name="idNumber"]').val().trim(),
       email: $(this).find('[name="email"]').val().trim(),
       gender: $(this).find('[name="gender"]:checked').val(),
-      password: $(this).find('[name="password"]').val()
+      password: $(this).find('[name="password"]').val(),
     };
 
     if (formData.idNumber.length !== 11) {
-      alert("T.C. Kimlik Numarası 11 haneli olmalıdır.");
+      alert("Turkish ID Number must be 11 digits.");
       return;
     }
 
@@ -153,15 +153,15 @@ $(document).ready(function () {
         url: "/register",
         type: "POST",
         contentType: "application/json",
-        data: JSON.stringify(formData)
+        data: JSON.stringify(formData),
       });
 
       if (res.success) {
-        alert("Kayıt başarılı! Giriş yapıldı.");
+        alert("Registration successful! You are now logged in.");
         window.location.reload();
       }
     } catch (err) {
-      let msg = err.responseJSON?.error || "Kayıt sırasında bir hata oluştu.";
+      let msg = err.responseJSON?.error || "An error occurred during registration.";
       alert(msg);
     } finally {
       setLoading(btn, false);
@@ -170,16 +170,16 @@ $(document).ready(function () {
 });
 
 function setLoading(btn, isLoading) {
-  const spinner = btn.find('.spinner-border');
-  const textSpan = btn.find('.text-btn');
+  const spinner = btn.find(".spinner-border");
+  const textSpan = btn.find(".text-btn");
 
   if (isLoading) {
-    btn.prop('disabled', true);
-    spinner.removeClass('d-none');
-    textSpan.addClass('d-none');
+    btn.prop("disabled", true);
+    spinner.removeClass("d-none");
+    textSpan.addClass("d-none");
   } else {
-    btn.prop('disabled', false);
-    spinner.addClass('d-none');
-    textSpan.removeClass('d-none');
+    btn.prop("disabled", false);
+    spinner.addClass("d-none");
+    textSpan.removeClass("d-none");
   }
 }

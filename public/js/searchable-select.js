@@ -1,16 +1,14 @@
 document.querySelectorAll('.searchable-select').forEach(wrapper => {
     const real = wrapper.querySelector('select');
     const items = Array.from(real.options).map(o => ({ value: o.value, text: o.textContent }));
-    const ph = real.dataset.placeholder || 'Seçiniz...';
+    const ph = real.dataset.placeholder || 'Select...'; 
 
-    // Görsel elemanlar
     const box = document.createElement('div');
     box.className = 'ss-main';
     box.innerHTML = `
       <button class="ss-toggle form-control text-start" aria-haspopup="listbox" aria-expanded="false">${ph}</button>
       <div class="ss-dropdown" role="listbox">
-        <input class="ss-search form-control form-control-sm" type="text" placeholder="Ara..." autocomplete="off">
-        <ul class="ss-list list-unstyled mb-0"></ul>
+        <input class="ss-search form-control form-control-sm" type="text" placeholder="Search..." autocomplete="off"> <ul class="ss-list list-unstyled mb-0"></ul>
       </div>`;
     real.style.display = 'none';
     wrapper.appendChild(box);
@@ -26,7 +24,7 @@ document.querySelectorAll('.searchable-select').forEach(wrapper => {
     function render() {
         list.innerHTML = '';
         if (!filtered.length) {
-            list.innerHTML = '<li class="ss-no">Sonuç yok</li>';
+            list.innerHTML = '<li class="ss-no">No results</li>'; 
             return;
         }
         filtered.forEach((it, idx) => {
@@ -66,17 +64,13 @@ document.querySelectorAll('.searchable-select').forEach(wrapper => {
 
     toggle.addEventListener('click', () => drop.classList.contains('show') ? close() : open());
 
-    // Arama
+    // Arama -> Search
     search.addEventListener('input', e => {
         filtered = items.filter(it => it.text.toLowerCase().includes(e.target.value.toLowerCase()));
         selected = 0;
         render();
     });
 
-    // Klavye
-    toggle.addEventListener('keydown', e => {
-        if (e.key === 'ArrowDown') { open(); e.preventDefault(); }
-    });
     search.addEventListener('keydown', e => {
         const itemsEl = list.querySelectorAll('.ss-item');
         if (e.key === 'ArrowDown') {
@@ -93,6 +87,5 @@ document.querySelectorAll('.searchable-select').forEach(wrapper => {
         } else if (e.key === 'Escape') close();
     });
 
-    // Dışarı tıklama
     document.addEventListener('click', e => { if (!box.contains(e.target)) close(); });
 });

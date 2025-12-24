@@ -8,7 +8,7 @@ const indexRoute = require('./routes/index.js');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const tenantKey = 'anafartalar';
+const tenantKey = 'testfirm';
 app.locals.tenantKey = tenantKey;
 
 // Express ayarları

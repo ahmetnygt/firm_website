@@ -3,7 +3,7 @@ extends layout
 block content
     .container.py-5
         .row.g-4
-            // SOL KOLON: ÖZET KART
+            // LEFT COLUMN: SUMMARY CARD
             .col-lg-4
                 .card.border-0.shadow-sm.h-100
                     .card-body.text-center.p-4
@@ -11,72 +11,72 @@ block content
                             .bg-primary.text-white.rounded-circle.d-inline-flex.align-items-center.justify-content-center(style="width: 80px; height: 80px; font-size: 2rem;")
                                 i.bi.bi-person-fill
                         h5.fw-bold.mb-1= user.name + ' ' + user.surname
-                        p.text-muted.small Üyelik Bilgilerim
+                        p.text-muted.small My Membership Details
                         hr.my-4
                         .text-start
                             .mb-3
-                                small.text-muted.d-block T.C. Kimlik No
+                                small.text-muted.d-block Turkish ID Number
                                 span.fw-medium= user.idNumber
                             .mb-3
-                                small.text-muted.d-block Telefon
+                                small.text-muted.d-block Phone
                                 span.fw-medium= user.phoneNumber
                             .mb-3
-                                small.text-muted.d-block 
+                                small.text-muted.d-block
                                     if user.pointOrPercent == 'point'
-                                        | Puan Miktarı 
+                                        | Points Balance
                                     else
-                                        | İndirim Yüzdesi 
+                                        | Discount Percentage
                                 if user.pointOrPercent == 'point'
                                     span.fw-medium= user.point_amount
                                 else
                                     span.fw-medium= user.percent
                             .mb-0
-                                small.text-muted.d-block Üyelik Tarihi
+                                small.text-muted.d-block Membership Date
                                 span.fw-medium= new Date(user.createdAt).toLocaleDateString('tr-TR')
 
-            // SAĞ KOLON: GÜNCELLEME FORMU
+            // RIGHT COLUMN: UPDATE FORM
             .col-lg-8
                 .card.border-0.shadow-sm.h-100
                     .card-header.bg-white.py-3
-                        h5.mb-0.fw-bold Bilgilerimi Güncelle
+                        h5.mb-0.fw-bold Update My Information
                     .card-body.p-4
                         form#profileForm
                             .row.g-3
                                 .col-md-6
-                                    label.form-label Ad
+                                    label.form-label First Name
                                     input.form-control(type="text" name="name" value=user.name required)
                                 .col-md-6
-                                    label.form-label Soyad
+                                    label.form-label Last Name
                                     input.form-control(type="text" name="surname" value=user.surname required)
 
                                 .col-md-6
-                                    label.form-label E-Posta
-                                    input.form-control(type="email" name="email" value=user.email placeholder="ornek@email.com")
+                                    label.form-label Email
+                                    input.form-control(type="email" name="email" value=user.email placeholder="example@mail.com")
 
                                 .col-md-6
-                                    label.form-label Cinsiyet
+                                    label.form-label Gender
                                     select.form-select(name="gender")
-                                        option(value="m" selected=user.gender==='m') Erkek
-                                        option(value="f" selected=user.gender==='f') Kadın
+                                        option(value="m" selected=user.gender==='m') Male
+                                        option(value="f" selected=user.gender==='f') Female
 
                                 .col-12
                                     hr.my-3
                                     h6.fw-bold.text-primary
                                         i.bi.bi-shield-lock.me-2
-                                        | Şifre Değiştir
-                                    p.text-muted.small.mb-3 (Sadece değiştirmek istiyorsanız doldurun)
+                                        | Change Password
+                                    p.text-muted.small.mb-3 (Fill only if you want to change it)
 
                                 .col-md-6
-                                    label.form-label Yeni Şifre
+                                    label.form-label New Password
                                     input.form-control(type="password" name="password" placeholder="******")
                                 .col-md-6
-                                    label.form-label Yeni Şifre (Tekrar)
+                                    label.form-label New Password (Confirm)
                                     input.form-control(type="password" name="passwordConfirm" placeholder="******")
 
                                 .col-12.mt-4.d-flex.justify-content-end
                                     button.btn.btn-primary.btn-lg(type="submit")
                                         i.bi.bi-save.me-2
-                                        | Değişiklikleri Kaydet
+                                        | Save Changes
 
 block js
     script(src="/js/profile.js")

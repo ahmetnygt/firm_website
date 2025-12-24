@@ -5,7 +5,7 @@ $(document).ready(function () {
         const btn = $(this).find('button[type="submit"]');
         const originalText = btn.html();
 
-        // Form Verileri
+        // Form Data
         const formData = {
             name: $(this).find('[name="name"]').val(),
             surname: $(this).find('[name="surname"]').val(),
@@ -15,20 +15,22 @@ $(document).ready(function () {
             passwordConfirm: $(this).find('[name="passwordConfirm"]').val()
         };
 
-        // Şifre Kontrolü
+        // Password Validation
         if (formData.password || formData.passwordConfirm) {
             if (formData.password !== formData.passwordConfirm) {
-                alert("Girdiğiniz şifreler eşleşmiyor!");
+                alert("The passwords you entered do not match!");
                 return;
             }
             if (formData.password.length < 6) {
-                alert("Şifre en az 6 karakter olmalıdır.");
+                alert("The password must be at least 6 characters long.");
                 return;
             }
         }
 
         // Loading
-        btn.prop("disabled", true).html('<span class="spinner-border spinner-border-sm me-2"></span>Kaydediliyor...');
+        btn
+            .prop("disabled", true)
+            .html('<span class="spinner-border spinner-border-sm me-2"></span>Saving...');
 
         try {
             const res = await $.ajax({
@@ -39,13 +41,13 @@ $(document).ready(function () {
             });
 
             if (res.success) {
-                alert("Bilgileriniz başarıyla güncellendi.");
-                // Sayfayı yenile ki cookie ve UI güncellensin
+                alert("Your information has been updated successfully.");
+                // Reload the page to refresh cookies and UI
                 window.location.reload();
             }
         } catch (err) {
             console.error(err);
-            alert(err.responseJSON?.error || "Güncelleme sırasında bir hata oluştu.");
+            alert(err.responseJSON?.error || "An error occurred while updating your information.");
             btn.prop("disabled", false).html(originalText);
         }
     });

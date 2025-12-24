@@ -1,28 +1,16 @@
-/** -------------------------------------------
- *  TRIP CARD AÇ/KAPA + KOLTUK SEÇİMİ BİRLEŞİK KOD
- * ------------------------------------------- */
-
-// Tüm seçilmiş koltukları tutan global array
 var ticketPairs = [];
 var selectedSeat = null;
 var selectedTrip = null;
 
-/* ------------------------------
-   TRIP KARTI AÇ / KAPA
--------------------------------*/
 $(".trip").off().on("click", function () {
     $(this).find(".trip_content").slideToggle(300);
     this.classList.toggle("open");
 });
 
-// İç içerik tıklanınca kartın kapanmasını engelle
 $(".trip_content").off().on("click", function (e) {
     e.stopPropagation();
 });
 
-/* ------------------------------
-   KOLTUK SEÇİMİ + CİNSİYET POPUP
--------------------------------*/
 $(".trip_seat").off().on("click", function (e) {
     e.stopPropagation();
 
@@ -42,9 +30,6 @@ $(".trip_seat").off().on("click", function (e) {
     popup.classList.add("show");
 });
 
-/* ------------------------------
-   HELPER: Koltuğu yeşil highlight et
--------------------------------*/
 const highlightSeat = (tripId, seatNumber) => {
     const $el = $(`.trip_seat[data-trip='${tripId}'][data-seat-number='${seatNumber}']`);
 
@@ -56,9 +41,6 @@ const highlightSeat = (tripId, seatNumber) => {
     $el.find("span").css("color", "#008346");
 };
 
-/* ------------------------------
-   HELPER: ticketPairs içine ekle/güncelle
--------------------------------*/
 const upsertTicket = (tripId, seatNumber, gender) => {
     ticketPairs = ticketPairs.filter(
         t => !(t.tripId === tripId && t.seatNumber === seatNumber)
@@ -67,9 +49,6 @@ const upsertTicket = (tripId, seatNumber, gender) => {
     ticketPairs.push({ tripId, seatNumber, gender });
 };
 
-/* ------------------------------
-   HELPER: Trip kartındaki seçim özetini güncelle
--------------------------------*/
 const updateTripSeatSummary = (tripId) => {
     const $trip = $(`.trip[data-trip-id='${tripId}']`);
     const $summary = $trip.find(".trip_info-selection");
@@ -95,15 +74,12 @@ const updateTripSeatSummary = (tripId) => {
 
     if (Number.isFinite(price)) {
         const total = price * selected.length;
-        totalText = ` - Toplam: ${total.toFixed(2)}₺`;
+        totalText = ` - Total: ${total.toFixed(2)}₺`; 
     }
 
-    $summary.text(`Koltuklar: ${seatText}${totalText}`);
+    $summary.text(`Seats: ${seatText}${totalText}`); 
 };
 
-/* ------------------------------
-   POPUP → ERKEK SEÇİMİ
--------------------------------*/
 $(".gender-pick .m").off().on("click", () => {
     if (!selectedSeat || !selectedTrip) return;
 
@@ -116,9 +92,6 @@ $(".gender-pick .m").off().on("click", () => {
     $(".gender-pick").removeClass("show");
 });
 
-/* ------------------------------
-   POPUP → KADIN SEÇİMİ
--------------------------------*/
 $(".gender-pick .f").off().on("click", () => {
     if (!selectedSeat || !selectedTrip) return;
 
@@ -131,9 +104,6 @@ $(".gender-pick .f").off().on("click", () => {
     $(".gender-pick").removeClass("show");
 });
 
-/* ------------------------------
-   ÖDEME OLUŞTURMA → PAYMENT PAGE'E GİT
--------------------------------*/
 $(".trip_confirm-button").off().on("click", async (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -145,15 +115,14 @@ $(".trip_confirm-button").off().on("click", async (e) => {
     const toStopId = Number($trip.data("toStopId"));
 
     if (!tripId || !fromStopId || !toStopId) {
-        alert("Sefer bilgileri eksik. Lütfen tekrar deneyin.");
+        alert("Trip information is missing. Please try again."); 
         return;
     }
 
-    // Bu trip için seçilmiş koltukları çek
     const selected = ticketPairs.filter(t => t.tripId === tripId);
 
     if (!selected.length) {
-        alert("Lütfen en az bir koltuk seçin.");
+        alert("Please select at least one seat."); 
         return;
     }
 
@@ -180,18 +149,16 @@ $(".trip_confirm-button").off().on("click", async (e) => {
         const data = await response.json();
 
         if (!response.ok || !data.paymentId) {
-            throw new Error(data.error || "Ödeme isteği oluşturulamadı.");
+            throw new Error(data.error || "Failed to create payment request."); 
         }
 
-        // Seçimleri temizle
         ticketPairs = ticketPairs.filter(t => t.tripId !== tripId);
 
-        // Payment sayfasına yönlendir
         window.location.href = `/payment/${data.paymentId}`;
 
     } catch (err) {
         console.error("Payment create error:", err);
-        alert("Ödeme isteği sırasında bir hata oluştu.");
+        alert("An error occurred during the payment request."); 
     }
 });
 
@@ -201,7 +168,7 @@ document.getElementById("searchForm").addEventListener("submit", (e) => {
     const to = document.getElementById("to").value;
     const date = document.getElementById("date").value;
 
-    if (from === to) return alert("Kalkış ve Varış aynı olamaz!");
+    if (from === to) return alert("Departure and Arrival cannot be the same!");
 
     if (from && to && date) {
         window.location.href = `/trips?from=${from}&to=${to}&date=${date}`;
