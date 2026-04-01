@@ -1,0 +1,92 @@
+extends layout
+
+block css
+    link(rel="stylesheet" href="/css/payment.css")
+
+block content
+    .payment-page.container.py-4
+        h2.page-title.mb-4 Passenger Information & Ticket Processing
+
+        if error
+            .alert.alert-danger= error
+
+        .row.g-4
+            // LEFT — TRIP DETAILS
+            .col-lg-4.col-12
+                .card.shadow-sm.p-3
+                    h5.mb-3 Outbound Trip Details
+
+                    ul.list-unstyled.trip-info.mt-3
+                        li
+                            strong Departure:
+                            |  #{trip.fromStr}
+
+                        li
+                            strong Arrival:
+                            |  #{trip.toStr}
+
+                        li
+                            strong Date:
+                            |  #{trip.date}
+
+                        li
+                            strong Time:
+                            |  #{trip.time}
+
+                        li
+                            strong Seats:
+                            |  #{seatNumbers.join(", ")}
+
+            // RIGHT — PASSENGER + CONTACT → CREATE TICKET
+            .col-lg-8.col-12
+                form#ticketSubmit(method="POST")
+                    // 🔥 Passenger Details
+                    .card.shadow-sm.p-4.mb-4
+                        h5.mb-3 Passenger Details
+
+                        input(type="hidden" name="paymentId" value=paymentId)
+
+                        each seat, idx in seatNumbers
+                            .passenger-box.border.rounded.p-3.mb-3
+                                h6.mb-3 #{seat} Seat – #{genders[idx] == "m" ? "Male" : "Female"}
+
+                                input(type="hidden" name="seatNumbers[]" value=seat)
+                                input(type="hidden" name="genders[]" value=genders[idx])
+
+                                .row.g-3
+                                    .col-md-6
+                                        label.form-label First Name
+                                        input.form-control(type="text" name=`name[]` required)
+
+                                    .col-md-6
+                                        label.form-label Last Name
+                                        input.form-control(type="text" name=`surname[]` required)
+
+                                .row.g-3.mt-1
+                                    .col-12
+                                        label.form-label Turkish ID Number
+                                        input.form-control(type="text" name=`idNumber[]` required)
+
+                    // 🔥 CONTACT INFO
+                    .card.shadow-sm.p-4.mb-4
+                        h5.mb-3 Contact Information
+
+                        .row.g-3
+                            .col-md-6
+                                label.form-label Phone
+                                input.form-control(type="tel" name="phone" required)
+
+                            .col-md-6
+                                label.form-label Email
+                                input.form-control(type="email" name="email" required)
+
+                    .text-center.mt-3
+                        input.me-2(type="checkbox" required)
+                        | I have read and agree to the terms of use.
+
+                    button.btn.btn-accent.btn-lg.w-100.mt-3#confirmTicket
+                        i.bi.bi-ticket-perforated.me-2
+                        | Create Ticket
+
+block js
+    script(src="/js/payment.js")

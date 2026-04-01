@@ -1,0 +1,271 @@
+:root {
+    --primary-color: #0088CC;
+    --accent-color: #D94E1E;
+    --bg-color: #f8f9fa;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg-color);
+}
+
+* {
+    transition: 0.2s all;
+}
+
+.ratio-21-9 {
+    aspect-ratio: 21/9;
+}
+
+.top-bar {
+    background: var(--accent-color);
+}
+
+a {
+    text-decoration: none;
+    color: var(--accent-color);
+}
+
+.hero {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+}
+
+.hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, .45);
+    z-index: -1;
+}
+
+.gtr-bg-secondary {
+    background-color: var(--accent-color) !important;
+}
+
+.btn-primary {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.btn-primary:hover {
+    background-color: color-mix(in srgb, var(--primary-color) 90%, black) !important;
+    border-color: color-mix(in srgb, var(--primary-color) 90%, black) !important;
+}
+
+.btn-outline-primary {
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+.gtr-card {
+    background: #ffffff;
+    border-radius: 1rem;
+    /* rounded-4 */
+    padding: 1.5rem;
+    /* p-4 */
+    box-shadow: 0 5px 18px rgba(0, 0, 0, .08);
+    border: 1px solid rgba(0, 0, 0, 0.175);
+    transition: .25s ease;
+    position: relative;
+}
+
+/* hover istemiyorsan bu bloğu silebilirsin */
+.gtr-card:hover {
+    box-shadow: 0 8px 26px rgba(0, 0, 0, .12);
+    transform: translateY(-2px);
+}
+
+/* Mobilde biraz daha ferah dursun */
+@media(max-width:768px) {
+    .gtr-card {
+        padding: 1.25rem;
+        border-radius: .85rem;
+    }
+}
+
+.card {
+    transition: transform .2s, box-shadow .2s;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+}
+
+.object-fit-cover {
+    object-fit: cover;
+}
+
+/* focus ring */
+a:focus,
+button:focus,
+input:focus,
+select:focus {
+    /* outline: 2px solid var(--primary-color) !important;
+    outline-offset: 2px; */
+    outline: none;
+}
+
+/* Popüler sefer kart */
+.card-pop {
+    transition: transform .25s, box-shadow .25s;
+}
+
+.card-pop:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, .15) !important;
+}
+
+.icon-box {
+    width: 56px;
+    height: 56px;
+    background: var(--accent-color);
+}
+
+.price-box {
+    background: color-mix(in srgb, var(--primary-color) 10%, white);
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    position: absolute;
+    top: -1rem;
+    right: -1rem;
+    border: solid 2px;
+}
+
+.bus-bg {
+    width: 100%;
+    height: 100px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 640'><path d='M480 64C568.4 64 640 135.6 640 224L640 448C640 483.3 611.3 512 576 512L570.4 512C557.2 549.3 521.8 576 480 576C438.2 576 402.7 549.3 389.6 512L250.5 512C237.3 549.3 201.8 576 160.1 576C118.4 576 82.9 549.3 69.7 512L64 512C28.7 512 0 483.3 0 448L0 160C0 107 43 64 96 64L480 64zM160 432C133.5 432 112 453.5 112 480C112 506.5 133.5 528 160 528C186.5 528 208 506.5 208 480C208 453.5 186.5 432 160 432zM480 432C453.5 432 432 453.5 432 480C432 506.5 453.5 528 480 528C506.5 528 528 506.5 528 480C528 453.5 506.5 432 480 432zM480 128C462.3 128 448 142.3 448 160L448 352C448 369.7 462.3 384 480 384L544 384C561.7 384 576 369.7 576 352L576 224C576 171 533 128 480 128zM248 288L352 288C369.7 288 384 273.7 384 256L384 160C384 142.3 369.7 128 352 128L248 128L248 288zM96 128C78.3 128 64 142.3 64 160L64 256C64 273.7 78.3 288 96 288L200 288L200 128L96 128z'/></svg>");
+    background-repeat: repeat-x;
+    background-size: 120px auto;
+    /* ikon boyutu */
+    background-position: center;
+    background-color: #2660ff;
+    /* istersen renkli zemin */
+}
+
+
+/* ===== Searchable Select ===== */
+.searchable-select {
+    position: relative
+}
+
+.ss-main .ss-toggle {
+    background: #fff;
+    border: 1px solid #ced4da;
+    padding: .375rem .75rem;
+    border-radius: .25rem;
+    cursor: pointer;
+}
+
+.ss-main .ss-toggle:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+.ss-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    z-index: 1050;
+    display: none;
+    max-height: 220px;
+    overflow: hidden;
+}
+
+.ss-dropdown.show {
+    display: block
+}
+
+/* .ss-search {
+    margin: .25rem .5rem .5rem
+} */
+
+.ss-list {
+    max-height: 160px;
+    overflow-y: auto;
+    padding: .25rem 0
+}
+
+.ss-item {
+    padding: .35rem .75rem;
+    cursor: pointer;
+    font-size: .95rem;
+}
+
+.ss-item:hover,
+.ss-item.active {
+    background: color-mix(in srgb, var(--primary-color) 10%, white);
+    color: var(--primary-color);
+}
+
+.ss-no {
+    padding: .5rem .75rem;
+    color: #6c757d;
+    font-size: .875rem
+}
+
+/* --- AUTH MODAL STYLES --- */
+.modal-content {
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.modal-header {
+    background: var(--primary-color) !important;
+    /* Sitenin ana rengini alır */
+}
+
+/* Input Group Focus Efekti */
+.modal-body .input-group:focus-within .input-group-text,
+.modal-body .input-group:focus-within .form-control {
+    border-color: var(--primary-color);
+    box-shadow: none;
+}
+
+.modal-body .input-group-text {
+    background-color: #f8f9fa;
+    border-right: none;
+}
+
+.modal-body .form-control:focus {
+    box-shadow: none;
+}
+
+/* Link Hover */
+.modal-body a:hover {
+    text-decoration: underline !important;
+}
+
+/* Ticket Card Styles */
+.ticket-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+}
+
+.ticket-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+}
+
+.ticket-card .badge {
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}

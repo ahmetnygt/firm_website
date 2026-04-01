@@ -1,0 +1,60 @@
+.payment-page {
+    max-width: 950px;
+}
+
+.page-title {
+    font-weight: 700;
+}
+
+.card {
+    border-radius: 12px;
+}
+
+.trip-info li {
+    margin-bottom: 10px;
+}
+
+.passenger-box {
+    background: #f9fafc;
+}
+
+.total-box {
+    background: #e7fff3;
+    border-color: var(--accent-color) !important;
+}
+
+.text-accent {
+    color: var(--accent-color);
+}
+
+.btn-accent {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: white;
+}
+
+.btn-accent:hover {
+    background: #00b25f;
+}
+
+label.form-label {
+    font-size: .9rem;
+    font-weight: 500;
+}
+
+input.form-control {
+    height: 44px;
+}
+
+@media (max-width: 768px) {
+    .total-box {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    h5,
+    h6 {
+        text-align: center;
+    }
+}
