@@ -141,11 +141,33 @@ async function getJourneySeats(journeyId) {
     return await obusRequest('web/getjourneyseats', journeyId);
 }
 
+// 1. Aşama: Koltuğu Kilitleme (Sepete Atma)
+async function prepareOrder(journeyId, passengersData) {
+    const data = {
+        "journey-id": journeyId, // Kök dizinde!
+        "passengers": passengersData
+    };
+    return await obusRequest('web/prepareorder', data);
+}
+
+// 2. Aşama: Bilet Kesme Yerine Rezervasyon (Ayırtma) Yapma
+async function makeReservation(journeyId, orderCode, passengersData) {
+    const data = {
+        "journey-id": journeyId,
+        "order-code": orderCode,
+        "passengers": passengersData
+    };
+    console.log(data)
+    return await obusRequest('web/reservation', data);
+}
+
 module.exports = {
     getSession,
     userLogin,
     obusRequest,
     getStations,
     getJourneys,
-    getJourneySeats
+    getJourneySeats,
+    prepareOrder,
+    makeReservation // Bunları dışarı açıyoruz
 };

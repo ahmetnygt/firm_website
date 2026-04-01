@@ -117,16 +117,134 @@ exports.getJourneySeats = async (req, res) => {
 
 // --- AŞAĞIDAKİ METODLARIN İÇİ ŞİMDİLİK BOŞ, SIRA GELDİKÇE oBUS'A BAĞLAYACAĞIZ ---
 
+// Sepete Ekleme / Koltuk Kilitleme
 exports.createPayment = async (req, res) => {
-    res.status(501).json({ error: "Yakında oBus entegrasyonu gelecek." });
+    try {
+        const { tripId, seatNumbers, genders, price } = req.body;
+
+        // oBus PrepareOrder'ın beklediği şema
+        const passengersData = seatNumbers.map((seat, idx) => ({
+            "gender": genders[idx] === 'm', // 'm' ise true (Erkek), 'f' ise false (Kadın)
+            "seat-number": Number(seat),
+            "price": Number(price) || 0,
+            "name": "YOLCU", // Geçici isim
+            "surname": "BILGISI", // Geçici soyisim
+            "full-name": "YOLCU BILGISI"
+        }));
+
+        // journey-id'yi de parametre olarak yolluyoruz
+        const apiRes = await obusApi.prepareOrder(tripId, passengersData);
+
+        if (apiRes.success && apiRes.data) {
+            // İkinci adımda lazım olacak her boku (özellikle API'nin ürettiği passenger ID'lerini) cookie'ye basıyoruz
+            const checkoutData = {
+                tripId: tripId,
+                orderCode: apiRes.data['pos-order'] ? apiRes.data['pos-order'].code : null, // Örn: 3WH002BXA
+                orderId: apiRes.data.id,
+                passengersInfo: apiRes.data.passengers, // Bu çok kritik, api'nin verdiği yolcu ID'leri burada
+                seatNumbers: seatNumbers,
+                genders: genders,
+                totalPrice: apiRes.data['total-price'] || (Number(price) * seatNumbers.length)
+            };
+
+            res.cookie('checkoutData', JSON.stringify(checkoutData), { maxAge: 15 * 60 * 1000 });
+            return res.json({ success: true, paymentId: apiRes.data.id });
+        } else {
+            return res.status(400).json({ error: apiRes.userMessage || "Koltuklar rezerve edilemedi." });
+        }
+
+    } catch (err) {
+        console.error("SITE_PAYMENT_CREATE_ERR:", err.response?.data || err.message);
+        return res.status(500).json({ error: "API Hatası: PrepareOrder" });
+    }
 };
 
+// Ödeme (Yolcu Bilgileri) Sayfasını Gösterme
 exports.getPaymentPage = async (req, res) => {
-    res.send("Ödeme sayfası yapım aşamasında.");
+    try {
+        const id = req.params.id;
+        const checkoutDataStr = req.cookies.checkoutData;
+
+        if (!checkoutDataStr) {
+            return res.render("payment", { error: "Oturum süreniz doldu veya koltuk seçmediniz. Lütfen tekrar deneyin." });
+        }
+
+        const checkoutData = JSON.parse(checkoutDataStr);
+
+        return res.render("payment", {
+            paymentId: id,
+            // Detaylı sefer verisi elimizde olmadığı için şimdilik statik basıyoruz
+            trip: { fromStr: "Seçili Kalkış", toStr: "Seçili Varış", date: "Belirtilen Tarih", time: "Belirtilen Saat" },
+            seatNumbers: checkoutData.seatNumbers,
+            genders: checkoutData.genders,
+            totalPrice: checkoutData.totalPrice,
+        });
+
+    } catch (err) {
+        return res.render("payment", { error: "Ödeme sayfası yüklenemedi." });
+    }
 };
 
+// Rezervasyonu Tamamlama
 exports.paymentComplete = async (req, res) => {
-    res.status(501).json({ error: "Yakında oBus entegrasyonu gelecek." });
+    try {
+        const checkoutDataStr = req.cookies.checkoutData;
+        if (!checkoutDataStr) return res.status(400).json({ error: "Sipariş zaman aşımına uğradı. Lütfen baştan başlayın." });
+
+        const checkoutData = JSON.parse(checkoutDataStr);
+        const formPayload = req.body;
+
+        // Telefonu temizle (Sadece rakamları al ve başında 0 varsa at)
+        let cleanPhone = formPayload.phone ? formPayload.phone.replace(/\D/g, '') : '';
+        if (cleanPhone.startsWith('0')) cleanPhone = cleanPhone.substring(1);
+
+        const filledPassengers = checkoutData.passengersInfo.map(p => {
+            const seatStr = String(p['seat-number']);
+
+            // Koltuk numaralarını güvenli array'e al (tek koltuk veya çok koltuk ihtimali)
+            let seatArray = formPayload.seatNumbers || formPayload['seatNumbers[]'] || [];
+            if (!Array.isArray(seatArray)) seatArray = [seatArray];
+
+            const seatIndex = seatArray.indexOf(seatStr);
+
+            if (seatIndex !== -1) {
+                // Front-end'den gelen isim, soyisim ve TC'leri güvenli array formatına çevir
+                let names = formPayload.names || formPayload.name || formPayload['name[]'] || [];
+                let surnames = formPayload.surnames || formPayload.surname || formPayload['surname[]'] || [];
+                let ids = formPayload.idNumbers || formPayload.idNumber || formPayload['idNumber[]'] || [];
+
+                if (!Array.isArray(names)) names = [names];
+                if (!Array.isArray(surnames)) surnames = [surnames];
+                if (!Array.isArray(ids)) ids = [ids];
+
+                p['first-name'] = names[seatIndex] || "YOLCU";
+                p['last-name'] = surnames[seatIndex] || "BILGISI";
+                p['full-name'] = `${p['first-name']} ${p['last-name']}`;
+                p['email'] = formPayload.email || "";
+                p['phone'] = cleanPhone;
+                p['gov-id'] = ids[seatIndex] || "";
+                p['nationality'] = "TR";
+                p['passenger-type'] = 1;
+                p['pnr-code'] = checkoutData.orderCode;
+            }
+            return p;
+        });
+
+        const apiRes = await obusApi.makeReservation(checkoutData.tripId, checkoutData.orderCode, filledPassengers);
+
+        if (apiRes.success) {
+            res.clearCookie('checkoutData');
+            return res.json({ success: true, pnr: apiRes.data['order-code'] || checkoutData.orderCode });
+        } else {
+            return res.status(400).json({ error: apiRes['user-message'] || apiRes.message || "Rezervasyon reddedildi." });
+        }
+
+    } catch (err) {
+        const obusError = err.response?.data;
+        console.error("PAYMENT_COMPLETE_ERR:", JSON.stringify(obusError || err.message, null, 2));
+        const detail = obusError?.['user-message'] || obusError?.message || err.message;
+        return res.status(500).json({ error: `API Hatası: ${detail}` });
+    }
 };
 
 exports.login = async (req, res) => {
