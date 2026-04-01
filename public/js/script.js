@@ -183,3 +183,30 @@ function setLoading(btn, isLoading) {
     textSpan.removeClass("d-none");
   }
 }
+
+// =============================
+// YÖN DEĞİŞTİR (SWAP) BUTONU
+// =============================
+const swapBtn = document.getElementById("swapCities");
+if (swapBtn) {
+  swapBtn.addEventListener("click", () => {
+    const fromVal = fromSelect.value;
+    const toVal = toSelect.value;
+
+    // Değerleri Takas Et
+    fromSelect.value = toVal;
+    toSelect.value = fromVal;
+
+    // Custom Searchable Select UI'larını güncelle (Text'leri değiştir)
+    const fromWrapper = fromSelect.closest('.searchable-select');
+    const toWrapper = toSelect.closest('.searchable-select');
+
+    if (fromWrapper && toWrapper) {
+      const fromText = fromSelect.options[fromSelect.selectedIndex]?.text || "Nereden";
+      const toText = toSelect.options[toSelect.selectedIndex]?.text || "Nereye";
+
+      fromWrapper.querySelector('.ss-toggle').textContent = fromText;
+      toWrapper.querySelector('.ss-toggle').textContent = toText;
+    }
+  });
+}

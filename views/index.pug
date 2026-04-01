@@ -1,152 +1,260 @@
 extends layout
 
+block css
+    style.
+        /* Firma Renkleri */
+        :root {
+            --primary-color: #{tenant.primaryColor || '#0088CC'};
+            --accent-color: #{tenant.accentColor || '#D94E1E'};
+        }
+
+        /* Modern Arama Kartı */
+        .hero-search-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-weight: 800;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 0.5rem;
+            color: #2c3e50;
+            text-transform: uppercase;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background-color: var(--accent-color);
+            border-radius: 2px;
+        }
+
+        /* 4'lü ve 3'lü İkonlar */
+        .attr-icon {
+            color: var(--accent-color);
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+            display: inline-block;
+        }
+
+        /* Popüler Şehirler (Eski sitedeki gibi asimetrik grid) */
+        .city-card { border-radius: 0.5rem; overflow: hidden; border: none; }
+        .city-card img { transition: transform 0.5s ease; width: 100%; object-fit: cover; }
+        .city-card.large img { height: 320px; }
+        .city-card.small img { height: 150px; }
+        .city-card:hover img { transform: scale(1.05); }
+        .city-card-overlay { background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%); align-items: flex-end !important; padding: 1.25rem !important; }
+
+        /* Fiyatlı Rota Kartları */
+        .price-card {
+            border-radius: 0.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #eaeaea;
+            background: #fff;
+        }
+        .price-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+            border-color: var(--accent-color);
+        }
+        .old-price { text-decoration: line-through; color: #a0a0a0; font-size: 1.1rem; }
+        .new-price { color: var(--accent-color); font-size: 2.5rem; font-weight: 800; }
+        .feature-list i { color: #27ae60; margin-right: 0.5rem; }
+
+        /* Swap (Yön Değiştir) Butonu Animasyonu */
+        .swap-btn { transition: transform 0.3s ease; }
+        .swap-btn:active { transform: rotate(180deg) scale(0.9); }
+
 block content
-    // 3) HERO
-    section.hero.position-relative.text-white
-        .hero-bg
+    // 1) HERO ALANI (Sola Yaslı Form)
+    section.hero.position-relative(style="min-height: 80vh; display: flex; align-items: center;")
+        .hero-bg.position-absolute.w-100.h-100.top-0.start-0(style="z-index: -2;")
             picture
                 source(media="(min-width:992px)" srcset="/images/hero-bg.webp" type="image/webp")
                 source(media="(min-width:768px)" srcset="/images/hero-bg.webp" type="image/webp")
-                source(srcset="/images/hero-bg.webp" type="image/webp")
-                img.img-fluid.w-100.h-100.object-fit-cover(
-                    src="/images/hero-bg.webp"
-                    alt="Bus journey"
-                    loading="lazy")
-            .hero-overlay
-        .container.h-100.position-relative.py-4
-            .row.h-100.align-items-center
-                .col-lg-5
-                    .card.shadow-lg.rounded-4.p-4
-                        h1.h4.mb-3 Start your journey!
-                        #searchForm
-                            .row.g-2.mb-3
-                                .col-md-6
-                                    label.form-label(for="from") Departure
-                                    .searchable-select
-                                        select.form-select#from(required)
-                                            //- option(value="") Select
+                img.img-fluid.w-100.h-100.object-fit-cover(src="/images/hero-bg.webp" alt=`${tenant.name} Otobüs Yolculuğu` loading="eager" fetchpriority="high")
+        
+        .hero-overlay.position-absolute.w-100.h-100.top-0.start-0(style="background: linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0) 100%); z-index: -1;")
+        
+        .container.position-relative.py-5
+            .row
+                .col-xl-5.col-lg-6.col-md-8.mt-5.mt-lg-0
+                    .text-white.mb-4
+                        h1.display-5.fw-bold.mb-2.text-shadow Dakik ve Güvenli Yolculuk
+                        p.lead.fw-normal.text-light Trakya'nın en güvenilir filosuyla konforlu seyahatin tadını çıkarın.
+                    
+                    .hero-search-card.p-4
+                        form#searchForm
+                            .mb-3
+                                label.form-label.fw-bold.text-dark Kalkış - Varış Noktası
+                                .d-flex.align-items-center.gap-2
+                                    .flex-grow-1.searchable-select(style="width: 40%;")
+                                        select.form-select.form-select-lg#from(required)
+                                            option(disabled selected value="") Nereden
                                             each c in cities
                                                 option(value=c.placeId)= c.title
-                                .col-md-6
-                                    label.form-label(for="to") Arrival
-                                    .searchable-select
-                                        select.form-select#to(required)
-                                            //- option(value="") Select
+                                    
+                                    button.btn.btn-outline-primary.rounded-circle.swap-btn.flex-shrink-0#swapCities(type="button" style="width: 42px; height: 42px; padding: 0;" aria-label="Yönleri Değiştir")
+                                        i.bi.bi-arrow-left-right
+                                    
+                                    .flex-grow-1.searchable-select(style="width: 40%;")
+                                        select.form-select.form-select-lg#to(required)
+                                            option(disabled selected value="") Nereye
                                             each c in cities
                                                 option(value=c.placeId)= c.title
-                            .row.g-2.mb-3
-                                .col-md-8
-                                    label.form-label(for="date") Date
-                                    .input-group
-                                        input.form-control#date(type="text" required)
-                                        span.input-group-text
-                                            i.bi.bi-calendar3
-                                .col-md-4.d-flex.align-items-end
-                                    .btn-group.w-100
-                                        button.btn.btn-sm.btn-outline-secondary.today(type="button") Today
-                                        button.btn.btn-sm.btn-outline-secondary.tomorrow(type="button") Tomorrow
-                            .d-grid
-                                button.btn.btn-primary.btn-lg(type="submit") Search trips
-                        if tenant.isGooglePlay || tenant.isAppStore
-                            .mt-3.text-center
-                                small.text-muted Download our app
-                                .mt-2
-                                    if tenant.isGooglePlay
-                                        a.me-2(href="#" aria-label="Google Play")
-                                            i.bi.bi-google-play.me-1
-                                            | Google Play
-                                    if tenant.isAppStore
-                                        a(href="#" aria-label="App Store")
-                                            i.bi.bi-apple.me-1
-                                            | App Store
+                            
+                            .mb-4
+                                label.form-label.fw-bold.text-dark Yolculuk Tarihi
+                                .input-group.input-group-lg
+                                    input.form-control.bg-white#date(type="text" required placeholder="Tarih Seçin")
+                                    span.input-group-text.bg-white
+                                        i.bi.bi-calendar3.text-primary
+                            
+                            .d-flex.gap-2
+                                button.btn.btn-outline-secondary.today.fw-medium.flex-fill(type="button") Bugün
+                                button.btn.btn-outline-secondary.tomorrow.fw-medium.flex-fill(type="button") Yarın
+                                button.btn.btn-primary.btn-lg.fw-bold.flex-fill(type="submit" style="flex: 2;")
+                                    | Sefer Ara
 
-    // 4) IN 4 STEPS
-    section.py-5
-        .container
-            .row.text-center.mb-4
-                .col
-                    h2 Get your ticket in 4 steps
-                    p.text-muted Quick and easy.
-            .row.g-4
-                each step, idx in steps
-                    .col-6.col-md-3
-                        .card.border-0.text-center.h-100
-                            .card-body
-                                .mb-3
-                                    i.bi(class=step.icon style="font-size:2.5rem;color:var(--primary-color)")
-                                h5.card-title= step.title
-                                p.card-text.small Step #{idx+1}
+    // 2) 4 TEMEL ÖZELLİK
+    section.py-3.bg-white
+        .container.py-3
+            .row.text-center.g-4
+                .col-6.col-md-3
+                    i.bi.bi-car-front-fill.attr-icon
+                    h3.h6.fw-bold.text-dark KONFORLU SEYAHAT
+                .col-6.col-md-3
+                    i.bi.bi-emoji-smile-fill.attr-icon
+                    h3.h6.fw-bold.text-dark GÜLER YÜZLÜ EKİP
+                .col-6.col-md-3
+                    i.bi.bi-clock-fill.attr-icon
+                    h3.h6.fw-bold.text-dark ZAMANINDA VARIŞ
+                .col-6.col-md-3
+                    i.bi.bi-fan.attr-icon
+                    h3.h6.fw-bold.text-dark KLİMALI ARAÇLAR
 
-    // 5) ROUTE CARDS
-    section.py-5.bg-light
-        .container
-            h2.text-center.mb-4 Most popular routes
-            .row.g-3
-                - var routes = [{from:'Çanakkale',to:'İstanbul',img:'/images/route-1.png'},{from:'İstanbul',to:'Çorlu',img:'/images/route-2.png'},{from:'Çorlu',to:'İstanbul',img:'/images/route-3.png'},{from:'Bursa',to:'İstanbul',img:'/images/route-4.png'}]
-                each r in routes
-                    .col-md-6
-                        a.card.text-white(position-relative href="#")
-                            img.card-img.object-fit-cover.ratio-21-9(src=r.img alt=`${r.from} - ${r.to}` loading="lazy")
-                            .card-img-overlay.d-flex.align-items-center.justify-content-center
-                                .text-center
-                                    h3.card-title= r.from + ' → ' + r.to
-
-    // 6) POPULAR TRIPS – new design
-    section.py-5.bg-light
-        .container
+    // 3) POPÜLER ŞEHİRLER
+    section.py-3.bg-light
+        .container.py-4
             .text-center.mb-5
-                h2 Popular trips
-                p.text-muted Most frequently chosen routes
+                h2.section-title POPÜLER ŞEHİRLER
+            .row.g-3
+                .col-md-6
+                    a.card.city-card.large.text-white.text-decoration-none(href="#")
+                        img.card-img(src="/images/route-1.png" alt="İstanbul Çanakkale" loading="lazy")
+                        .card-img-overlay.city-card-overlay.d-flex.justify-content-center
+                            h3.h4.mb-0.fw-bold.text-white.text-shadow İSTANBUL-ÇANAKKALE
+                .col-md-6
+                    .row.g-3
+                        .col-12
+                            a.card.city-card.small.text-white.text-decoration-none(href="#")
+                                img.card-img(src="/images/route-2.png" alt="Eceabat Kadıköy" loading="lazy")
+                                .card-img-overlay.city-card-overlay.d-flex.justify-content-center
+                                    h3.h5.mb-0.fw-bold.text-white.text-shadow ECEABAT-KADIKÖY
+                        .col-12
+                            a.card.city-card.small.text-white.text-decoration-none(href="#")
+                                img.card-img(src="/images/route-3.png" alt="Çorlu İstanbul" loading="lazy")
+                                .card-img-overlay.city-card-overlay.d-flex.justify-content-center
+                                    h3.h5.mb-0.fw-bold.text-white.text-shadow ÇORLU-İSTANBUL
+
+    // 4) POPÜLER ROTALAR (Statik Fiyatlı Kartlar)
+    section.py-3.bg-white
+        .container.py-4
+            .text-center.mb-5
+                h2.section-title POPÜLER ROTALAR
+            .row.g-4.justify-content-center
+                // Kart 1
+                .col-md-4
+                    .card.price-card.h-100.p-4.text-center
+                        h3.h5.fw-bold.mb-3 ÇORLU > KADIKÖY
+                        .mb-4
+                            span.old-price.me-2 600₺
+                            span.new-price 450
+                                small.fs-5 ₺
+                        ul.list-unstyled.feature-list.text-start.mx-auto.mb-0(style="max-width: 180px;")
+                            li.mb-2
+                                i.bi.bi-check-circle-fill
+                                span.text-muted Konforlu Seyahat
+                            li.mb-2
+                                i.bi.bi-check-circle-fill
+                                span.text-muted Güler Yüzlü Ekip
+                            li.mb-2
+                                i.bi.bi-check-circle-fill
+                                span.text-muted Zamanında Varış
+                            li
+                                i.bi.bi-check-circle-fill
+                                span.text-muted Klimalı Araç
+
+                // Kart 2
+                .col-md-4
+                    .card.price-card.h-100.p-4.text-center
+                        h3.h5.fw-bold.mb-3 BEYLİKDÜZÜ > ÇANAKKALE
+                        .mb-4
+                            span.old-price.me-2 900₺
+                            span.new-price 750
+                                small.fs-5 ₺
+                        ul.list-unstyled.feature-list.text-start.mx-auto.mb-0(style="max-width: 180px;")
+                            li.mb-2
+                                i.bi.bi-check-circle-fill
+                                span.text-muted Konforlu Seyahat
+                            li.mb-2
+                                i.bi.bi-check-circle-fill
+                                span.text-muted Güler Yüzlü Ekip
+                            li.mb-2
+                                i.bi.bi-check-circle-fill
+                                span.text-muted Zamanında Varış
+                            li
+                                i.bi.bi-check-circle-fill
+                                span.text-muted Klimalı Araç
+
+                // Kart 3
+                .col-md-4
+                    .card.price-card.h-100.p-4.text-center
+                        h3.h5.fw-bold.mb-3 BEYLİKDÜZÜ > GELİBOLU
+                        .mb-4
+                            span.old-price.me-2 800₺
+                            span.new-price 650
+                                small.fs-5 ₺
+                        ul.list-unstyled.feature-list.text-start.mx-auto.mb-0(style="max-width: 180px;")
+                            li.mb-2
+                                i.bi.bi-check-circle-fill
+                                span.text-muted Konforlu Seyahat
+                            li.mb-2
+                                i.bi.bi-check-circle-fill
+                                span.text-muted Güler Yüzlü Ekip
+                            li.mb-2
+                                i.bi.bi-check-circle-fill
+                                span.text-muted Zamanında Varış
+                            li
+                                i.bi.bi-check-circle-fill
+                                span.text-muted Klimalı Araç
+
+    // 5) ALT GÜVENLİK/BİLGİ ALANI (3'lü yapı)
+    section.py-3.bg-light
+        .container.py-3
             .row.g-4
-                if popularTrips
-                    each pt, idx in popularTrips
-                        .col-md-6.col-lg-4
-                            .card.shadow-sm.h-100.card-pop
-                                .card-body.d-flex.flex-column.position-relative
-                                    .price-box.p-2.px-3.rounded-pill
-                                        .fw-bold= pt.price + ' ₺'
-                                    .d-flex.align-items-center.mb-3
-                                        .flex-shrink-0
-                                            .icon-box.rounded-circle.d-flex.align-items-center.justify-content-center
-                                                i.bi.bi-bus-front.fs-4.text-white
-                                        .ms-3
-                                            .fw-bold.fs-5= pt.fromStr + ' → ' + pt.toStr
-                                    .d-grid
-                                        button.btn.btn-primary Buy ticket
-
-    // 7) DESTINATION CHIPS
-    section.py-5.bg-light
-        .container
-            h2.text-center.mb-4 Popular destinations
-            .d-flex.flex-wrap.justify-content-center.gap-2
-                each d in destinations
-                    a.btn.btn-outline-primary.btn-sm(href="#")= d
-
-    // 8) MEMBERSHIP CTA BANNER
-    section.py-5.gtr-bg-secondary.text-white
-        .container
-            .row.align-items-center
-                .col-md-7.mb-4.mb-md-0
-                    h3 Become a member, don’t miss discounts!
-                    p.mb-0 Subscribe to our newsletter and be the first to hear about special offers.
-                .col-md-5.text-md-end
-                    form.d-flex.flex-column.flex-sm-row.gap-2
-                        input.form-control(type="email" placeholder="Your email address")
-                        button.btn.btn-primary(type="submit") Sign up
-
-    // 9) FAQ ACCORDION
-    section.py-5
-        .container
-            h2.text-center.mb-4 Frequently Asked Questions
-            .accordion.accordion-flush#faq
-                each item, idx in faq
-                    .accordion-item
-                        h2.accordion-header
-                            button.accordion-button.collapsed(
-                                type="button"
-                                data-bs-toggle="collapse"
-                                data-bs-target=`#f${idx}`
-                                aria-expanded="false"
-                                aria-controls=`f${idx}`)= item.q
-                        div(id=`f${idx}` class="accordion-collapse collapse" data-bs-parent="#faq")
-                            .accordion-body= item.a
+                .col-md-4.d-flex.align-items-start.justify-content-center.justify-content-md-start
+                    .attr-icon.me-3
+                        i.bi.bi-shield-check
+                    div
+                        h4.h6.fw-bold.text-dark GÜVENLİ ÖDEME
+                        p.small.text-muted.mb-0 Tüm ödemeleriniz SSL ile güvence altına alınmıştır.
+                .col-md-4.d-flex.align-items-start.justify-content-center.justify-content-md-start
+                    .attr-icon.me-3
+                        i.bi.bi-people-fill
+                    div
+                        h4.h6.fw-bold.text-dark TECRÜBELİ EKİP
+                        p.small.text-muted.mb-0 Alanında tecrübeli şoförlerimizle güvenle seyahat edin.
+                .col-md-4.d-flex.align-items-start.justify-content-center.justify-content-md-start
+                    .attr-icon.me-3
+                        i.bi.bi-bus-front-fill
+                    div
+                        h4.h6.fw-bold.text-dark KONFORLU SEYAHAT
+                        p.small.text-muted.mb-0 Tüm seferlerimiz sizin rahat etmeniz için özel planlanır.
