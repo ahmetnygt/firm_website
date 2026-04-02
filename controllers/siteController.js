@@ -78,22 +78,31 @@ exports.getTrips = async (req, res) => {
             const diffHrs = Math.floor(durationMs / 3600000);
             const diffMins = Math.floor((durationMs % 3600000) / 60000);
 
+            // Dakika ve saat formatını düzeltiyoruz (Örn: 4 saat 45 dakika veya sadece 4 saat)
+            let durationStr = "";
+            if (diffHrs > 0) durationStr += `${diffHrs} saat`;
+            if (diffMins > 0) durationStr += (durationStr ? " " : "") + `${diffMins} dakika`;
+            if (!durationStr) durationStr = "0 dakika";
+
             return {
                 id: j.id,
                 time: depDate.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
-                duration: `${diffHrs}s ${diffMins}d`,
+                duration: durationStr, // Yeni formatı bastık
                 price: j.price.internet,
                 fromStr: departure.name,
                 toStr: arrival.name,
                 fromStopId: departure.id,
                 toStopId: arrival.id,
                 routeDescription: j.route.map(r => r.name).join(' > '),
-                busFeatures: [] // Şimdilik boş, gerekirse j.features'dan ikon maplersin
+                routeTimeline: j.route.map(r => ({
+                    time: new Date(r.time).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
+                    title: r.name
+                })),
+                busFeatures: []
             };
         });
 
         console.log(`🚍 oBus'tan ${trips.length} adet sefer bulundu.`);
-
         return res.render("trips", { cities, trips, fromId: from, toId: to, date });
 
     } catch (err) {
@@ -120,31 +129,35 @@ exports.getJourneySeats = async (req, res) => {
 // Sepete Ekleme / Koltuk Kilitleme
 exports.createPayment = async (req, res) => {
     try {
-        const { tripId, seatNumbers, genders, price } = req.body;
+        const { tripId, seatNumbers, genders, price, fromStr, toStr, time, date } = req.body;
 
-        // oBus PrepareOrder'ın beklediği şema
         const passengersData = seatNumbers.map((seat, idx) => ({
-            "gender": genders[idx] === 'm', // 'm' ise true (Erkek), 'f' ise false (Kadın)
+            "gender": genders[idx] === 'm', 
             "seat-number": Number(seat),
             "price": Number(price) || 0,
-            "name": "YOLCU", // Geçici isim
-            "surname": "BILGISI", // Geçici soyisim
+            "name": "YOLCU", 
+            "surname": "BILGISI", 
             "full-name": "YOLCU BILGISI"
         }));
 
-        // journey-id'yi de parametre olarak yolluyoruz
         const apiRes = await obusApi.prepareOrder(tripId, passengersData);
 
         if (apiRes.success && apiRes.data) {
-            // İkinci adımda lazım olacak her boku (özellikle API'nin ürettiği passenger ID'lerini) cookie'ye basıyoruz
             const checkoutData = {
                 tripId: tripId,
-                orderCode: apiRes.data['pos-order'] ? apiRes.data['pos-order'].code : null, // Örn: 3WH002BXA
+                orderCode: apiRes.data['pos-order'] ? apiRes.data['pos-order'].code : null, 
                 orderId: apiRes.data.id,
-                passengersInfo: apiRes.data.passengers, // Bu çok kritik, api'nin verdiği yolcu ID'leri burada
+                passengersInfo: apiRes.data.passengers, 
                 seatNumbers: seatNumbers,
                 genders: genders,
-                totalPrice: apiRes.data['total-price'] || (Number(price) * seatNumbers.length)
+                totalPrice: apiRes.data['total-price'] || (Number(price) * seatNumbers.length),
+                // YENİ EKLENEN: Sefer Detaylarını Cookie'ye atıyoruz
+                tripDetails: {
+                    fromStr: fromStr || "Bilinmiyor",
+                    toStr: toStr || "Bilinmiyor",
+                    time: time || "-",
+                    date: date || "-"
+                }
             };
 
             res.cookie('checkoutData', JSON.stringify(checkoutData), { maxAge: 15 * 60 * 1000 });
@@ -171,10 +184,26 @@ exports.getPaymentPage = async (req, res) => {
 
         const checkoutData = JSON.parse(checkoutDataStr);
 
+        // TARIHI INSANCIL FORMATLAMA (Örn: 2026-04-01 -> 1 Nisan 2026 Çarşamba)
+        if (checkoutData.tripDetails && checkoutData.tripDetails.date && checkoutData.tripDetails.date !== "-") {
+            try {
+                const dateObj = new Date(checkoutData.tripDetails.date);
+                if (!isNaN(dateObj.getTime())) {
+                    checkoutData.tripDetails.date = dateObj.toLocaleDateString('tr-TR', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                        weekday: 'long'
+                    });
+                }
+            } catch(e) {
+                console.error("Tarih formatlanırken ufak bir pürüz:", e);
+            }
+        }
+
         return res.render("payment", {
             paymentId: id,
-            // Detaylı sefer verisi elimizde olmadığı için şimdilik statik basıyoruz
-            trip: { fromStr: "Seçili Kalkış", toStr: "Seçili Varış", date: "Belirtilen Tarih", time: "Belirtilen Saat" },
+            trip: checkoutData.tripDetails, 
             seatNumbers: checkoutData.seatNumbers,
             genders: checkoutData.genders,
             totalPrice: checkoutData.totalPrice,

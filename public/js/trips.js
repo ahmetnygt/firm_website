@@ -4,17 +4,20 @@ let selectedTrip = null;
 
 // Senin orijinal efsanevi SVG koltuk motorun
 function getSeatSvg(fill, stroke, textStr, textColor) {
+    // x ve y merkezlendi, dominant-baseline ile tam ortaya sabitlendi
     const textHtml = textStr !== '' ?
-        `<text x="50" y="65" text-anchor="middle" fill="${textColor}" font-size="28px" font-weight="bold">${textStr}</text>` : '';
+        `<text x="50" y="60" dominant-baseline="middle" text-anchor="middle" fill="${textColor}" font-size="28px" font-weight="bold">${textStr}</text>` : '';
 
     return `
-    <div style="position:relative; width: 2.75rem; height: 3rem;">
-        <svg viewBox="0 0 100 110" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-            <rect x="25" y="5" width="50" height="18" rx="9" fill="${fill}" stroke="${stroke}" stroke-width="3" />
-            <rect x="10" y="20" width="80" height="80" rx="15" fill="${fill}" stroke="${stroke}" stroke-width="3" />
-            <rect x="70" y="20" width="20" height="80" rx="10" fill="${fill}" stroke="${stroke}" stroke-width="3" />
-            ${textHtml}
+    <div style="position:relative; width: 2.75rem; height: 2.75rem; max-width: 100px;">
+        <svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="10" width="80" height="80" rx="10" ry="10" fill="${fill}" stroke="${stroke}" stroke-width="2" />
+            <rect x="30" y="1" width="50" height="20" rx="5" ry="5" fill="${fill}" stroke="${stroke}" stroke-width="2" />
+            <rect x="30" y="75" width="50" height="20" rx="5" ry="5" fill="${fill}" stroke="${stroke}" stroke-width="2" />
+            <rect x="75" y="10" width="20" height="80" rx="5" ry="5" fill="${fill}" stroke="${stroke}" stroke-width="2" />
+            <rect x="69" y="30" width="30" height="40" rx="5" ry="5" fill="${fill}" stroke="${stroke}" stroke-width="2" />
         </svg>
+        ${textHtml}
     </div>`;
 }
 
@@ -38,7 +41,7 @@ $(".trip").off().on("click", async function (e) {
 
     if (!$trip.data("loaded")) {
         // 🔥 SKELETON LOADING
-        let skeletonHtml = '<div class="d-flex flex-column-reverse gap-1 placeholder-glow overflow-auto pb-2 px-2">';
+        let skeletonHtml = '<div class="d-flex flex-column-reverse gap-1 placeholder-glow overflow-auto">';
         for (let col = 1; col <= 5; col++) {
             skeletonHtml += '<div class="d-flex flex-row gap-1">';
             for (let row = 1; row <= 8; row++) {
@@ -74,7 +77,7 @@ function renderSeatsHorizontal($container, cells, tripId) {
     if (!cells || !cells.length) return;
 
     $container.empty();
-    $container.addClass("d-flex flex-column-reverse gap-1 overflow-auto pb-2 px-2");
+    $container.addClass("d-flex flex-column-reverse gap-1 overflow-auto");
 
     const maxRow = Math.max(...cells.map(c => c.row));
     const maxCol = Math.max(...cells.map(c => c.col));
@@ -92,8 +95,10 @@ function renderSeatsHorizontal($container, cells, tripId) {
                 const seatNo = cell.seat !== 0 ? cell.seat : '';
                 let fill, stroke, textC;
 
-                if (cell.type === 'Available') {
-                    fill = "#FFFFFF"; stroke = "#666666"; textC = "#000000";
+                const isAvailable = cell.type && cell.type.startsWith('Available');
+
+                if (isAvailable) {
+                    fill = "#FFFFFF"; stroke = "#b4b4b4"; textC = "#000000";
                 } else if (cell.type === 'TakenM' || (cell.type.includes('Taken') && cell.gender === true)) {
                     fill = "#D6EAF8"; stroke = "#3498DB"; textC = "#1F618D";
                 } else if (cell.type === 'TakenF' || (cell.type.includes('Taken') && cell.gender === false)) {
@@ -109,10 +114,11 @@ function renderSeatsHorizontal($container, cells, tripId) {
                 if (!html) {
                     html = `
                     <div class="trip_seat" 
-                         data-is-available="${cell.type === 'Available'}" 
+                         data-is-available="${isAvailable}" 
+                         data-available-type="${cell.type}" 
                          data-seat-number="${cell.seat}" 
                          data-trip="${tripId}"
-                         style="cursor:${cell.type === 'Available' ? 'pointer' : 'not-allowed'}; outline: none;">
+                         style="cursor:${isAvailable ? 'pointer' : 'not-allowed'}; outline: none;">
                         ${getSeatSvg(fill, stroke, seatNo, textC)}
                     </div>`;
                 }
@@ -176,10 +182,27 @@ function bindSeatClicks() {
 
         selectedSeat = String($seat.data("seat-number"));
         selectedTrip = String($seat.data("trip"));
+        
+        // API'den gelen Available, AvailableM veya AvailableF verisini okuyoruz
+        const availType = $seat.data("available-type");
 
         const popup = document.querySelector(".gender-pick");
-        const rect = this.getBoundingClientRect();
+        const $mBtn = $(popup).find('.m');
+        const $fBtn = $(popup).find('.f');
 
+        // Müşterinin elini kolunu bağlıyoruz: Cinsiyete göre butonları gizle/göster
+        if (availType === 'AvailableM') {
+            $mBtn.show();
+            $fBtn.hide();
+        } else if (availType === 'AvailableF') {
+            $mBtn.hide();
+            $fBtn.show();
+        } else {
+            $mBtn.show();
+            $fBtn.show();
+        }
+
+        const rect = this.getBoundingClientRect();
         popup.style.left = rect.left + rect.width / 2 + "px";
         popup.style.top = rect.bottom + window.scrollY + "px";
         popup.style.transform = "translate(-50%, -125%)";
@@ -244,7 +267,13 @@ $(document).on("click", ".trip_confirm-button", async function (e) {
 
     const seatNumbers = selected.map(t => t.seatNumber);
     const genders = selected.map(t => t.gender);
-    const price = Number($trip.data("price")) || 0; // Fiyatı ekledik
+    const price = Number($trip.data("price")) || 0;
+
+    // Arayüzden seferin detaylarını çekiyoruz
+    const fromStr = $trip.find('.trip-city:first-of-type span').text().trim();
+    const toStr = $trip.find('.trip-city:last-of-type span').text().trim();
+    const time = $trip.find('.trip-time span').text().trim();
+    const date = $("#date").val(); // Arama formundaki tarih inputu
 
     const payload = {
         tripId,
@@ -252,7 +281,11 @@ $(document).on("click", ".trip_confirm-button", async function (e) {
         toStopId,
         seatNumbers,
         genders,
-        price // Backend bu fiyatı API'ye iletecek
+        price,
+        fromStr, // Eklendi
+        toStr,   // Eklendi
+        time,    // Eklendi
+        date     // Eklendi
     };
 
     const $btn = $(this);

@@ -1,92 +1,246 @@
 extends layout
 
 block css
-    link(rel="stylesheet" href="/css/payment.css")
+    style.
+        /* ============================
+           ÖDEME / YOLCU SAYFASI MODERNİZASYONU
+        ============================ */
+        .payment-page {
+            max-width: 1000px;
+        }
+        
+        .section-title {
+            font-weight: 800;
+            color: #2c3e50;
+            position: relative;
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 4px;
+            background-color: var(--accent-color);
+            border-radius: 2px;
+        }
+        
+        .info-card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            background: #fff;
+        }
+        
+        .info-card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eaeaea;
+            border-radius: 1rem 1rem 0 0;
+            padding: 1.25rem 1.5rem;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .trip-detail-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px dashed #eaeaea;
+        }
+        .trip-detail-item:last-child {
+            border-bottom: none;
+        }
+        
+        .trip-detail-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(0, 136, 204, 0.1);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+        
+        .passenger-box {
+            background: #fafbfc;
+            border: 1px solid #eaeaea;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .passenger-box-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .gender-badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .gender-badge.male { background-color: #D6EAF8; color: #1F618D; }
+        .gender-badge.female { background-color: #F8BBD0; color: #C2185B; }
+        
+        .form-control-glass {
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+        }
+        .form-control-glass:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(0, 136, 204, 0.1);
+        }
+        
+        .btn-accent {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: white;
+            font-weight: 700;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        .btn-accent:hover {
+            background-color: color-mix(in srgb, var(--accent-color) 85%, black);
+            border-color: color-mix(in srgb, var(--accent-color) 85%, black);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(217, 78, 30, 0.3);
+        }
+        
+        .terms-check {
+            accent-color: var(--primary-color);
+            width: 1.25rem;
+            height: 1.25rem;
+        }
 
 block content
-    .payment-page.container.py-4
-        h2.page-title.mb-4 Passenger Information & Ticket Processing
+    .payment-page.container.py-5
+        .mb-4
+            h2.section-title Yolcu ve İletişim Bilgileri
+            p.text-muted.mt-2 Lütfen bilet işlemleriniz için bilgileri eksiksiz doldurun.
 
         if error
-            .alert.alert-danger= error
+            .alert.alert-danger.shadow-sm.rounded-3= error
 
         .row.g-4
-            // LEFT — TRIP DETAILS
+            // SOL: SEFER DETAYLARI
             .col-lg-4.col-12
-                .card.shadow-sm.p-3
-                    h5.mb-3 Outbound Trip Details
+                .info-card
+                    .info-card-header
+                        i.bi.bi-bus-front.me-2.text-primary
+                        | Gidiş Seferi Detayları
+                    .card-body.p-4
+                        .trip-detail-item.pt-0
+                            .trip-detail-icon
+                                i.bi.bi-geo-alt-fill
+                            div
+                                .small.text-muted Kalkış Noktası
+                                .fw-bold.text-dark= trip.fromStr
 
-                    ul.list-unstyled.trip-info.mt-3
-                        li
-                            strong Departure:
-                            |  #{trip.fromStr}
+                        .trip-detail-item
+                            .trip-detail-icon
+                                i.bi.bi-geo-alt
+                            div
+                                .small.text-muted Varış Noktası
+                                .fw-bold.text-dark= trip.toStr
 
-                        li
-                            strong Arrival:
-                            |  #{trip.toStr}
+                        .trip-detail-item
+                            .trip-detail-icon
+                                i.bi.bi-calendar-date
+                            div
+                                .small.text-muted Tarih ve Saat
+                                .fw-bold.text-dark #{trip.date} - #{trip.time}
 
-                        li
-                            strong Date:
-                            |  #{trip.date}
+                        .trip-detail-item.pb-0
+                            .trip-detail-icon
+                                i.bi.bi-123
+                            div
+                                .small.text-muted Seçilen Koltuklar
+                                .fw-bold.text-dark= seatNumbers.join(", ")
 
-                        li
-                            strong Time:
-                            |  #{trip.time}
-
-                        li
-                            strong Seats:
-                            |  #{seatNumbers.join(", ")}
-
-            // RIGHT — PASSENGER + CONTACT → CREATE TICKET
+            // SAĞ: YOLCU + İLETİŞİM FORMU
             .col-lg-8.col-12
                 form#ticketSubmit(method="POST")
-                    // 🔥 Passenger Details
-                    .card.shadow-sm.p-4.mb-4
-                        h5.mb-3 Passenger Details
+                    input(type="hidden" name="paymentId" value=paymentId)
 
-                        input(type="hidden" name="paymentId" value=paymentId)
+                    // YOLCU BİLGİLERİ
+                    .info-card.mb-4
+                        .info-card-header
+                            i.bi.bi-people.me-2.text-primary
+                            | Yolcu Bilgileri
+                        .card-body.p-4.pb-2
+                            each seat, idx in seatNumbers
+                                .passenger-box
+                                    .passenger-box-header
+                                        .fs-5.fw-bold.text-dark #{seat} Numaralı Koltuk
+                                        if genders[idx] == "m"
+                                            span.gender-badge.male Erkek Yolcu
+                                        else
+                                            span.gender-badge.female Kadın Yolcu
 
-                        each seat, idx in seatNumbers
-                            .passenger-box.border.rounded.p-3.mb-3
-                                h6.mb-3 #{seat} Seat – #{genders[idx] == "m" ? "Male" : "Female"}
+                                    input(type="hidden" name="seatNumbers[]" value=seat)
+                                    input(type="hidden" name="genders[]" value=genders[idx])
 
-                                input(type="hidden" name="seatNumbers[]" value=seat)
-                                input(type="hidden" name="genders[]" value=genders[idx])
+                                    .row.g-3
+                                        .col-md-6
+                                            label.form-label.small.fw-bold.text-muted Adınız
+                                            input.form-control.form-control-glass(type="text" name=`name[]` placeholder="Yolcunun Adı" required)
 
-                                .row.g-3
-                                    .col-md-6
-                                        label.form-label First Name
-                                        input.form-control(type="text" name=`name[]` required)
+                                        .col-md-6
+                                            label.form-label.small.fw-bold.text-muted Soyadınız
+                                            input.form-control.form-control-glass(type="text" name=`surname[]` placeholder="Yolcunun Soyadı" required)
 
-                                    .col-md-6
-                                        label.form-label Last Name
-                                        input.form-control(type="text" name=`surname[]` required)
+                                        .col-12
+                                            label.form-label.small.fw-bold.text-muted T.C. Kimlik Numarası
+                                            input.form-control.form-control-glass(type="text" name=`idNumber[]` placeholder="11 Haneli T.C. Kimlik Numaranız" maxlength="11" required)
 
-                                .row.g-3.mt-1
-                                    .col-12
-                                        label.form-label Turkish ID Number
-                                        input.form-control(type="text" name=`idNumber[]` required)
+                    // İLETİŞİM BİLGİLERİ
+                    .info-card.mb-4
+                        .info-card-header
+                            i.bi.bi-telephone.me-2.text-primary
+                            | İletişim Bilgileri
+                        .card-body.p-4
+                            .row.g-3
+                                .col-md-6
+                                    label.form-label.small.fw-bold.text-muted Cep Telefonu
+                                    .input-group
+                                        span.input-group-text.bg-light.border-end-0
+                                            i.bi.bi-phone.text-muted
+                                        input.form-control.form-control-glass.border-start-0.ps-0(type="tel" name="phone" placeholder="5XX XXX XX XX" maxlength="10" required)
 
-                    // 🔥 CONTACT INFO
-                    .card.shadow-sm.p-4.mb-4
-                        h5.mb-3 Contact Information
+                                .col-md-6
+                                    label.form-label.small.fw-bold.text-muted E-Posta Adresi
+                                    .input-group
+                                        span.input-group-text.bg-light.border-end-0
+                                            i.bi.bi-envelope.text-muted
+                                        input.form-control.form-control-glass.border-start-0.ps-0(type="email" name="email" placeholder="ornek@mail.com" required)
 
-                        .row.g-3
-                            .col-md-6
-                                label.form-label Phone
-                                input.form-control(type="tel" name="phone" required)
-
-                            .col-md-6
-                                label.form-label Email
-                                input.form-control(type="email" name="email" required)
-
-                    .text-center.mt-3
-                        input.me-2(type="checkbox" required)
-                        | I have read and agree to the terms of use.
-
-                    button.btn.btn-accent.btn-lg.w-100.mt-3#confirmTicket
-                        i.bi.bi-ticket-perforated.me-2
-                        | Create Ticket
+                    // ONAY VE BUTON
+                    .info-card.mb-4
+                        .card-body.p-4.text-center
+                            .d-flex.align-items-center.justify-content-center.gap-2.mb-4
+                                input.terms-check(type="checkbox" required id="terms")
+                                label.fw-medium.text-dark(for="terms" style="cursor: pointer;") Kullanım koşullarını okudum ve onaylıyorum.
+                            
+                            button.btn.btn-accent.w-100#confirmTicket(type="submit")
+                                i.bi.bi-check-circle.me-2
+                                | Rezervasyonu Tamamla
 
 block js
     script(src="/js/payment.js")

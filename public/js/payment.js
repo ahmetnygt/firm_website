@@ -1,9 +1,14 @@
 document.getElementById("confirmTicket").addEventListener("click", async (e) => {
     e.preventDefault(); // Sayfanın yenilenmesini (geleneksel POST'u) engelliyoruz!
 
+    // Formu doldurmadan "Tamamla"ya basarsa HTML5 uyarılarını göster
     const form = document.getElementById("ticketSubmit");
-    const formData = new FormData(form);
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
 
+    const formData = new FormData(form);
     const payload = Object.fromEntries(formData);
 
     payload.seatNumbers = formData.getAll("seatNumbers[]");
@@ -32,14 +37,15 @@ document.getElementById("confirmTicket").addEventListener("click", async (e) => 
         const data = await res.json();
 
         if (data.success) {
-            alert("Bilet başarıyla kesildi! PNR Kodunuz: " + data.pnr);
+            alert("Bilet başarıyla rezerve edildi! PNR Kodunuz: " + data.pnr);
             window.location.href = "/"; // Şimdilik anasayfaya dönsün
         } else {
             alert("❌ İşlem başarısız: " + (data.error || "Bilinmeyen hata"));
+            btn.disabled = false;
+            btn.innerHTML = originalText;
         }
     } catch (err) {
         alert("❌ Sistemsel bir hata oluştu.");
-    } finally {
         btn.disabled = false;
         btn.innerHTML = originalText;
     }
