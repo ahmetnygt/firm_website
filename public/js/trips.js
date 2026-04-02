@@ -174,34 +174,59 @@ const updateTripSeatSummary = (tripId) => {
 };
 
 function bindSeatClicks() {
-    $(".trip_seat").off().on("click", function (e) {
+    $(".trip_seat").off("click").on("click", function (e) {
         e.stopPropagation();
         const $seat = $(this);
 
-        if ($seat.data("is-available") !== true) return;
+        // jQuery data() önbelleğine güvenmeyip direkt HTML attribute'tan saf string olarak okuyoruz
+        const isAvailable = $seat.attr("data-is-available") === "true";
+        if (!isAvailable) return;
 
-        selectedSeat = String($seat.data("seat-number"));
-        selectedTrip = String($seat.data("trip"));
+        const currentSeat = $seat.attr("data-seat-number");
+        const currentTrip = $seat.attr("data-trip");
+
+        // 1. İPTAL (DESELECT) KONTROLÜ: Koltuk zaten sepette var mı?
+        const isAlreadySelected = ticketPairs.some(t => t.tripId === currentTrip && t.seatNumber === currentSeat);
         
-        // API'den gelen Available, AvailableM veya AvailableF verisini okuyoruz
-        const availType = $seat.data("available-type");
+        if (isAlreadySelected) {
+            // Sepetten acımadan çıkar
+            ticketPairs = ticketPairs.filter(t => !(t.tripId === currentTrip && t.seatNumber === currentSeat));
+            
+            // Rengini orijinal Boş (Beyaz) haline döndür
+            $seat.html(getSeatSvg("#FFFFFF", "#b4b4b4", currentSeat, "#000000")); 
+            
+            // Alt kısmı (Sepet özeti) güncelle
+            updateTripSeatSummary(currentTrip);
+            
+            // Olası bir durumda açık kalan popup'ı gizle ve değişkenleri sıfırla
+            $(".gender-pick").removeClass("show");
+            selectedSeat = null;
+            selectedTrip = null;
+            return;
+        }
 
+        // 2. YENİ SEÇİM: Seçili değilse global değişkenleri ata ve popup'ı aç
+        selectedSeat = currentSeat;
+        selectedTrip = currentTrip;
+        
+        const availType = $seat.attr("data-available-type");
         const popup = document.querySelector(".gender-pick");
         const $mBtn = $(popup).find('.m');
         const $fBtn = $(popup).find('.f');
 
-        // Müşterinin elini kolunu bağlıyoruz: Cinsiyete göre butonları gizle/göster
+        // Cinsiyet Koruması (Flex yapısını bozmadan gizle/göster)
         if (availType === 'AvailableM') {
-            $mBtn.show();
+            $mBtn.css('display', 'flex');
             $fBtn.hide();
         } else if (availType === 'AvailableF') {
             $mBtn.hide();
-            $fBtn.show();
+            $fBtn.css('display', 'flex');
         } else {
-            $mBtn.show();
-            $fBtn.show();
+            $mBtn.css('display', 'flex');
+            $fBtn.css('display', 'flex');
         }
 
+        // Popup'ı koltuğun tam üstüne konumlandır
         const rect = this.getBoundingClientRect();
         popup.style.left = rect.left + rect.width / 2 + "px";
         popup.style.top = rect.bottom + window.scrollY + "px";

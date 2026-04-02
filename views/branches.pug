@@ -1,0 +1,135 @@
+extends layout
+
+block css
+    style.
+        .branches-hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/images/hero-bg.webp') center/cover no-repeat;
+            padding: 80px 0;
+            color: white;
+            text-align: center;
+            border-radius: 0 0 2rem 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            font-weight: 800;
+            color: #2c3e50;
+            position: relative;
+            padding-bottom: 0.5rem;
+            display: inline-block;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background-color: var(--accent-color);
+            border-radius: 2px;
+        }
+        
+        .branch-card {
+            background: #fff;
+            border: 1px solid #eaeaea;
+            border-radius: 1rem;
+            padding: 2rem;
+            height: 100%;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;          /* Eşit boy için Flex yapısı */
+            flex-direction: column; /* İçeriği yukarıdan aşağı dizer */
+        }
+        
+        .branch-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+            border-color: var(--primary-color);
+        }
+        
+        .branch-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--accent-color);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .branch-card:hover::before {
+            opacity: 1;
+        }
+        
+        .branch-icon {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(0, 136, 204, 0.1);
+            color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .contact-info {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            color: #4a5568;
+        }
+        
+        .contact-info i {
+            color: var(--accent-color);
+            font-size: 1.2rem;
+            margin-top: 0.2rem;
+        }
+
+block content
+    // HERO BÖLÜMÜ
+    .branches-hero
+        .container
+            h1.display-4.fw-bold.text-shadow ŞUBELERİMİZ & İLETİŞİM
+            p.lead.fw-light Size en yakın bilet satış noktamız ve iletişim kanallarımız
+
+    .container.py-5
+        .text-center
+            h2.section-title BİZE ULAŞIN
+            p.text-muted.mb-5 Sorularınız, önerileriniz ve bilet işlemleriniz için şubelerimizi ziyaret edebilir veya arayabilirsiniz.
+        
+        .row.g-4
+            each branch in branches
+                .col-md-6.col-lg-4
+                    .branch-card
+                        .branch-icon
+                            i.bi.bi-shop
+                        h3.h5.fw-bold.text-dark.mb-4= branch.name
+                        
+                        .contact-info
+                            i.bi.bi-geo-alt-fill
+                            span.small.fw-medium= branch.address
+                        
+                        .contact-info
+                            i.bi.bi-telephone-fill
+                            a.text-decoration-none.text-dark.small.fw-bold(href="tel:" + branch.phone.replace(/\s/g, "")) #{branch.phone}
+                        
+                        // mt-auto ile buton grubunu her zaman en dibe yapıştırıyoruz
+                        .mt-auto.pt-4
+                            .d-flex.gap-2
+                                a.btn.btn-outline-primary.flex-fill.fw-bold.rounded-pill(href=branch.mapUrl target="_blank" rel="noopener noreferrer" style="font-size: 0.9rem;")
+                                    i.bi.bi-map.me-1
+                                    | Harita
+                                a.btn.btn-primary.flex-fill.fw-bold.rounded-pill(href="tel:" + branch.phone.replace(/\s/g, "") style="font-size: 0.9rem;")
+                                    i.bi.bi-telephone.me-1
+                                    | Ara

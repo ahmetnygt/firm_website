@@ -276,12 +276,44 @@ exports.paymentComplete = async (req, res) => {
     }
 };
 
+exports.getBranchesPage = (req, res) => {
+    // Statik şube verileri (Daha sonra veritabanına bağlayabilirsin)
+    const branches = [
+        {
+            name: "Beylikdüzü (Merkez) Şube",
+            address: "Barış Mah. Sakarya Cad. Koçtaş Yanı No: 2/9 Beylikdüzü/İstanbul",
+            phone: "0212 552 23 87",
+            mapUrl: "https://maps.google.com/?q=Beylikdüzü+Koçtaş+İstanbul"
+        },
+        {
+            name: "Çorlu Orion Şube",
+            address: "Alipaşa, Çetin Emeç Blv. No:142/144, 59850 Çorlu/Tekirdağ (Orion AVM Arkası)",
+            phone: "0282 654 69 87",
+            mapUrl: "https://maps.google.com/?q=Orion+AVM+Çorlu"
+        },
+        {
+            name: "Çanakkale İskele Şube",
+            address: "İsmetpaşa Mah. Demircioğlu Cad. Merkez/Çanakkale",
+            phone: "0286 217 17 17",
+            mapUrl: "https://maps.google.com/?q=Çanakkale+İskele"
+        },
+        {
+            name: "Esenler Otogar Şube",
+            address: "Altıntepsi Mah. Esenler Otogarı Peron: 45, Bayrampaşa/İstanbul",
+            phone: "0212 658 58 58",
+            mapUrl: "https://maps.google.com/?q=Esenler+Otogarı"
+        }
+    ];
+
+    res.render('branches', { branches });
+};
+
 exports.login = async (req, res) => {
-    res.status(501).json({ error: "oBus Müşteri girişi bağlanacak." });
+    res.status(501).json({ error: "ÇOK YAKINDA EKLENECEK" });
 };
 
 exports.register = async (req, res) => {
-    res.status(501).json({ error: "oBus Müşteri kaydı bağlanacak." });
+    res.status(501).json({ error: "ÇOK YAKINDA EKLENECEK" });
 };
 
 exports.logout = (req, res) => {
@@ -294,13 +326,13 @@ exports.getProfilePage = async (req, res) => {
 };
 
 exports.updateProfile = async (req, res) => {
-    res.status(501).json({ error: "Profil güncelleme bağlanacak." });
+    res.status(501).json({ error: "ÇOK YAKINDA EKLENECEK" });
 };
 
 exports.getMyTicketsPage = async (req, res) => {
-    res.send("Biletlerim...");
+    res.send("ÇOK YAKINDA EKLENECEK");
 };
 
 exports.ticketAction = async (req, res) => {
-    res.status(501).json({ error: "Bilet iptal/iade bağlanacak." });
+    res.status(501).json({ error: "ÇOK YAKINDA EKLENECEK" });
 };

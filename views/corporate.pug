@@ -1,0 +1,214 @@
+extends layout
+
+block css
+    style.
+        .corporate-hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('/images/hero-bg.webp') center/cover no-repeat;
+            padding: 100px 0;
+            color: white;
+            text-align: center;
+            border-radius: 0 0 2rem 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            font-weight: 800;
+            color: #2c3e50;
+            position: relative;
+            padding-bottom: 0.5rem;
+            display: inline-block;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background-color: var(--accent-color);
+            border-radius: 2px;
+        }
+        
+        .corporate-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #4a5568;
+        }
+        
+        .feature-icon-box {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(217, 78, 30, 0.08);
+            color: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 1.25rem auto;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card {
+            border: 1px solid #eaeaea;
+            border-radius: 1rem;
+            background: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+            border-color: #d0d0d0;
+        }
+
+        .feature-card:hover .feature-icon-box {
+            background-color: var(--accent-color);
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .corporate-image-wrapper {
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            margin-bottom: 3rem;
+            border: 1px solid #eaeaea;
+        }
+
+        /* FAQ Akordiyon Tasarımı */
+        .accordion-button:not(.collapsed) {
+            color: var(--accent-color);
+            background-color: rgba(217, 78, 30, 0.05);
+            box-shadow: inset 0 -1px 0 rgba(0,0,0,.125);
+        }
+        .accordion-button:focus {
+            box-shadow: none;
+            border-color: rgba(0,0,0,.125);
+        }
+
+block content
+    // HERO BÖLÜMÜ (SEO H1)
+    .corporate-hero
+        .container
+            h1.display-4.fw-bold.text-shadow KURUMSAL
+            p.lead.fw-light Türkiye'nin En Güvenilir Otobüs Firması Hakkında
+
+    .container.py-5
+        .row.justify-content-center
+            .col-lg-10
+                // BAŞLIK VE ANA SEO PARAGRAFI
+                .text-center
+                    h2.section-title Yenibosna çortur seyahat ve turizm işletmeciliği tic. ltd. şti.
+                    
+                .corporate-image-wrapper
+                    img.img-fluid.w-100(src="/images/corporate_img.webp" alt=`${tenant.name} Kurumsal Otobüs Filosu` style="height: 450px; object-fit: cover;")
+                    
+                .corporate-content.text-center.mb-5.px-md-4
+                    p.mb-4
+                        | #{tenant.name} olarak, uzun yıllara dayanan tecrübemizle Türkiye'nin dört bir yanına 
+                        b.text-dark güvenli, konforlu ve kesintisiz otobüs seferleri 
+                        | düzenliyoruz. Seyahat sektöründeki yenilikçi vizyonumuzla, sadece bir ulaşım aracı değil, aynı zamanda ayrıcalıklı bir 
+                        b.text-dark yolculuk deneyimi 
+                        | sunmayı hedefliyoruz. Bakımları eksiksiz yapılan modern araç filomuz ve profesyonel kaptanlarımızla, sevdiklerinize kavuşmanız için yolları güvenle kısaltıyoruz.
+
+                // 3'LÜ İKON BÖLÜMÜ (H3 Hiyerarşisi ile)
+                .row.g-4.text-center.my-5
+                    .col-md-4
+                        .feature-card.h-100.p-4
+                            .feature-icon-box
+                                i.bi.bi-people-fill
+                            h3.h5.fw-bold.text-dark DENEYİMLİ EKİP
+                            p.text-muted.small.mt-3.mb-0 Alanında uzman kadromuz ve güler yüzlü personelimizle, bilet alımından varış noktasına kadar kusursuz bir hizmet sunuyoruz.
+                            
+                    .col-md-4
+                        .feature-card.h-100.p-4
+                            .feature-icon-box
+                                i.bi.bi-bus-front-fill
+                            h3.h5.fw-bold.text-dark KONFORLU FİLO
+                            p.text-muted.small.mt-3.mb-0 Yeni model, geniş koltuk aralıklı ve teknolojik donanıma sahip otobüs filomuz ile uzun yolları yorgunluğa değil, keyfe dönüştürüyoruz.
+                            
+                    .col-md-4
+                        .feature-card.h-100.p-4
+                            .feature-icon-box
+                                i.bi.bi-shield-check
+                            h3.h5.fw-bold.text-dark GÜVENLİ ONLINE BİLET
+                            p.text-muted.small.mt-3.mb-0 Gelişmiş altyapımız sayesinde ucuz ve güvenli otobüs bileti bulmak artık çok kolay. Tüm işlemleriniz %100 güvence altındadır.
+
+                // ALT KAPANIŞ VE CALL-TO-ACTION (Anahtar Kelime Odaklı)
+                .corporate-content.text-center.bg-white.p-4.p-md-5.rounded-4.shadow-sm.border.mt-5.mb-5
+                    p.mb-0
+                        | Teknolojiye yaptığımız yatırımlarla 
+                        b.text-dark online otobüs bileti 
+                        | alma sürecini saniyelere indiriyoruz. Web sitemiz üzerinden 7/24 kesintisiz olarak güzergahları inceleyebilir, 
+                        b.text-dark sefer saatlerini 
+                        | sorgulayabilir ve size en uygun koltuğu anında rezerve edebilirsiniz. Şeffaf fiyat politikası ve her bütçeye uygun 
+                        b.text-dark bilet fırsatlarıyla 
+                        | #{tenant.name}, yollardaki en güvenilir yol arkadaşınızdır. Hemen rotanızı belirleyin, kalitenin farkını yaşayın.
+
+                // SIKÇA SORULAN SORULAR (SEO CANAVARI FAQ BÖLÜMÜ)
+                .text-center.mt-5.pt-4
+                    h2.section-title SIKÇA SORULAN SORULAR
+                    p.text-muted.mb-4 Yolcularımızın en çok merak ettiği konular ve seyahat kurallarımız.
+                
+                .accordion.accordion-flush.shadow-sm.rounded-4.border.overflow-hidden.bg-white#seoFaq
+                    - 
+                        var faqs = [
+                            {q: "İnternetten ucuz otobüs bileti nasıl alınır?", a: "Web sitemiz üzerinden kalkış ve varış noktalarınızı seçerek güncel sefer saatlerini sorgulayabilir, size en uygun ve ucuz otobüs biletini 3D Secure güvenli ödeme altyapısıyla saniyeler içinde satın alabilirsiniz."},
+                            {q: "Bilet iptal ve iade koşulları nelerdir?", a: "Satın aldığınız online otobüs biletlerini, sefer saatine 24 saat kalana kadar web sitemizdeki 'Biletlerim' menüsünden kesintisiz olarak iptal edebilir ve kredi kartınıza tam iade alabilirsiniz."},
+                            {q: "Otobüs bagaj hakkım kaç kilogramdır?", a: "Konforlu seyahatiniz için her yolcumuzun bagaj bölümünde 30 kg'a kadar ücretsiz yük taşıma hakkı bulunmaktadır. Değerli eşyalarınızı içeren el bagajlarınızı ise araç içine alabilirsiniz."},
+                            {q: "Evcil hayvanımla otobüs yolculuğu yapabilir miyim?", a: "Evet, aşı karnesi tam ve özel taşıma çantası içinde olan küçük evcil hayvanlarınızla (kedi, küçük ırk köpek, kuş vb.) güvenle seyahat edebilirsiniz. Detaylı bilgi için müşteri hizmetlerimizle iletişime geçebilirsiniz."}
+                        ]
+                    each item, index in faqs
+                        .accordion-item.border-bottom
+                            h3.accordion-header
+                                button.accordion-button.collapsed.fw-bold.text-dark(type="button" data-bs-toggle="collapse" data-bs-target=`#faq${index}` aria-expanded="false")= item.q
+                            div(id=`faq${index}` class="accordion-collapse collapse" data-bs-parent="#seoFaq")
+                                .accordion-body.text-muted.lh-lg= item.a
+
+block js
+    // JSON-LD SCHEMA.ORG (GOOGLE'I ÇILDIRTAN KISIM)
+    script(type="application/ld+json").
+        {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": "İnternetten ucuz otobüs bileti nasıl alınır?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Web sitemiz üzerinden kalkış ve varış noktalarınızı seçerek güncel sefer saatlerini sorgulayabilir, size en uygun ve ucuz otobüs biletini 3D Secure güvenli ödeme altyapısıyla saniyeler içinde satın alabilirsiniz."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Bilet iptal ve iade koşulları nelerdir?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Satın aldığınız online otobüs biletlerini, sefer saatine 24 saat kalana kadar web sitemizdeki 'Biletlerim' menüsünden kesintisiz olarak iptal edebilir ve kredi kartınıza tam iade alabilirsiniz."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Otobüs bagaj hakkım kaç kilogramdır?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Konforlu seyahatiniz için her yolcumuzun bagaj bölümünde 30 kg'a kadar ücretsiz yük taşıma hakkı bulunmaktadır. Değerli eşyalarınızı içeren el bagajlarınızı ise araç içine alabilirsiniz."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Evcil hayvanımla otobüs yolculuğu yapabilir miyim?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Evet, aşı karnesi tam ve özel taşıma çantası içinde olan küçük evcil hayvanlarınızla (kedi, küçük ırk köpek, kuş vb.) güvenle seyahat edebilirsiniz. Detaylı bilgi için müşteri hizmetlerimizle iletişime geçebilirsiniz."
+                    }
+                }
+            ]
+        }

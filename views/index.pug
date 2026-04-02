@@ -18,10 +18,10 @@ block css
 
         .section-title {
             font-weight: 800;
-            position: relative;
-            display: inline-block;
-            padding-bottom: 0.5rem;
             color: #2c3e50;
+            position: relative;
+            padding-bottom: 0.5rem;
+            display: inline-block;
             text-transform: uppercase;
         }
         .section-title::after {
@@ -44,15 +44,7 @@ block css
             display: inline-block;
         }
 
-        /* Popüler Şehirler (Eski sitedeki gibi asimetrik grid) */
-        .city-card { border-radius: 0.5rem; overflow: hidden; border: none; }
-        .city-card img { transition: transform 0.5s ease; width: 100%; object-fit: cover; }
-        .city-card.large img { height: 320px; }
-        .city-card.small img { height: 150px; }
-        .city-card:hover img { transform: scale(1.05); }
-        .city-card-overlay { background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%); align-items: flex-end !important; padding: 1.25rem !important; }
-
-        /* Fiyatlı Rota Kartları */
+        /* Fiyatlı Rota Kartları (Kampanyalarımız) */
         .price-card {
             border-radius: 0.5rem;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -84,12 +76,11 @@ block content
         .hero-overlay.position-absolute.w-100.h-100.top-0.start-0(style="background: linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0) 100%); z-index: -1;")
         
         .container.position-relative.py-5
+            .text-white.mb-4
+                h1.display-5.fw-bold.mb-2.text-shadow Dakik ve Güvenli Yolculuk
+                p.lead.fw-normal.text-light Trakya'nın en güvenilir filosuyla konforlu seyahatin tadını çıkarın.
             .row
                 .col-xl-5.col-lg-6.col-md-8.mt-5.mt-lg-0
-                    .text-white.mb-4
-                        h1.display-5.fw-bold.mb-2.text-shadow Dakik ve Güvenli Yolculuk
-                        p.lead.fw-normal.text-light Trakya'nın en güvenilir filosuyla konforlu seyahatin tadını çıkarın.
-                    
                     .hero-search-card.p-4
                         form#searchForm
                             .mb-3
@@ -123,8 +114,8 @@ block content
                                 button.btn.btn-primary.btn-lg.fw-bold.flex-fill(type="submit" style="flex: 2;")
                                     | Sefer Ara
 
-    // 2) 4 TEMEL ÖZELLİK
-    section.py-3.bg-white
+    // 2) 4 TEMEL ÖZELLİK (bg-white)
+    section.py-5.bg-white
         .container.py-3
             .row.text-center.g-4
                 .col-6.col-md-3
@@ -140,35 +131,12 @@ block content
                     i.bi.bi-fan.attr-icon
                     h3.h6.fw-bold.text-dark KLİMALI ARAÇLAR
 
-    // 3) POPÜLER ŞEHİRLER
-    section.py-3.bg-light
+    // 3) KAMPANYALARIMIZ (bg-light)
+    section.py-5.bg-light
         .container.py-4
             .text-center.mb-5
-                h2.section-title POPÜLER ŞEHİRLER
-            .row.g-3
-                .col-md-6
-                    a.card.city-card.large.text-white.text-decoration-none(href="#")
-                        img.card-img(src="/images/route-1.png" alt="İstanbul Çanakkale" loading="lazy")
-                        .card-img-overlay.city-card-overlay.d-flex.justify-content-center
-                            h3.h4.mb-0.fw-bold.text-white.text-shadow İSTANBUL-ÇANAKKALE
-                .col-md-6
-                    .row.g-3
-                        .col-12
-                            a.card.city-card.small.text-white.text-decoration-none(href="#")
-                                img.card-img(src="/images/route-2.png" alt="Eceabat Kadıköy" loading="lazy")
-                                .card-img-overlay.city-card-overlay.d-flex.justify-content-center
-                                    h3.h5.mb-0.fw-bold.text-white.text-shadow ECEABAT-KADIKÖY
-                        .col-12
-                            a.card.city-card.small.text-white.text-decoration-none(href="#")
-                                img.card-img(src="/images/route-3.png" alt="Çorlu İstanbul" loading="lazy")
-                                .card-img-overlay.city-card-overlay.d-flex.justify-content-center
-                                    h3.h5.mb-0.fw-bold.text-white.text-shadow ÇORLU-İSTANBUL
-
-    // 4) POPÜLER ROTALAR (Statik Fiyatlı Kartlar)
-    section.py-3.bg-white
-        .container.py-4
-            .text-center.mb-5
-                h2.section-title POPÜLER ROTALAR
+                h2.section-title KAMPANYALARIMIZ
+                p.text-muted.mt-3 İndirimli bilet fiyatlarıyla konforlu seyahat fırsatlarını kaçırmayın.
             .row.g-4.justify-content-center
                 // Kart 1
                 .col-md-4
@@ -236,8 +204,77 @@ block content
                                 i.bi.bi-check-circle-fill
                                 span.text-muted Klimalı Araç
 
-    // 5) ALT GÜVENLİK/BİLGİ ALANI (3'lü yapı)
+    // 3) POPÜLER ŞEHİRLER
     section.py-3.bg-light
+        .container.py-4
+            .text-center.mb-5
+                h2.section-title POPÜLER ŞEHİRLER
+            .row.g-3
+                .col-md-6
+                    .row.g-3
+                        .col-12
+                            a.card.city-card.small.text-white.text-decoration-none(href="#")
+                                img.card-img(src="/images/route-2.png" alt="Eceabat Kadıköy" loading="lazy")
+                                .card-img-overlay.city-card-overlay.d-flex.justify-content-center
+                                    h3.h5.mb-0.fw-bold.text-white.text-shadow ECEABAT-KADIKÖY
+                        .col-12
+                            a.card.city-card.small.text-white.text-decoration-none(href="#")
+                                img.card-img(src="/images/route-3.png" alt="Çorlu İstanbul" loading="lazy")
+                                .card-img-overlay.city-card-overlay.d-flex.justify-content-center
+                                    h3.h5.mb-0.fw-bold.text-white.text-shadow ÇORLU-İSTANBUL
+                .col-md-6
+                    .row.g-3
+                        .col-12
+                            a.card.city-card.small.text-white.text-decoration-none(href="#")
+                                img.card-img(src="/images/route-2.png" alt="Eceabat Kadıköy" loading="lazy")
+                                .card-img-overlay.city-card-overlay.d-flex.justify-content-center
+                                    h3.h5.mb-0.fw-bold.text-white.text-shadow ECEABAT-KADIKÖY
+                        .col-12
+                            a.card.city-card.small.text-white.text-decoration-none(href="#")
+                                img.card-img(src="/images/route-3.png" alt="Çorlu İstanbul" loading="lazy")
+                                .card-img-overlay.city-card-overlay.d-flex.justify-content-center
+                                    h3.h5.mb-0.fw-bold.text-white.text-shadow ÇORLU-İSTANBUL
+
+
+    // 4) DURAKLARIMIZ (API'den Çekilen Dinamik Şehirler - bg-white)
+    if cities && cities.length
+        section.py-5.bg-white
+            .container.py-4
+                .text-center.mb-5
+                    h2.section-title DURAKLARIMIZ
+                    p.text-muted.mt-3 Yolcularımızı güvenle ulaştırdığımız tüm il ve ilçe duraklarımız.
+                .d-flex.flex-wrap.justify-content-center.gap-3.mt-4
+                    each c in cities
+                        span.btn.btn-outline-primary.rounded-pill.px-4.py-2.fw-medium(style="cursor: default;")
+                            i.bi.bi-geo-alt-fill.me-2
+                            | #{c.title}
+
+    // 5) SIKÇA SORULAN SORULAR (SEO CANAVARI FAQ BÖLÜMÜ - bg-light)
+    section.py-5.bg-light
+        .container.py-4
+            .text-center.mb-5
+                h2.section-title SIKÇA SORULAN SORULAR
+                p.text-muted.mt-3 Yolcularımızın en çok merak ettiği konular ve seyahat kurallarımız.
+            
+            .row.justify-content-center
+                .col-lg-8
+                    .accordion.accordion-flush.shadow-sm.rounded-4.border.overflow-hidden.bg-white#seoFaq
+                        - 
+                            var faqs = [
+                                {q: "İnternetten ucuz otobüs bileti nasıl alınır?", a: "Web sitemiz üzerinden kalkış ve varış noktalarınızı seçerek güncel sefer saatlerini sorgulayabilir, size en uygun ve ucuz otobüs biletini 3D Secure güvenli ödeme altyapısıyla saniyeler içinde satın alabilirsiniz."},
+                                {q: "Bilet iptal ve iade koşulları nelerdir?", a: "Satın aldığınız online otobüs biletlerini, sefer saatine 24 saat kalana kadar web sitemizdeki 'Biletlerim' menüsünden kesintisiz olarak iptal edebilir ve kredi kartınıza tam iade alabilirsiniz."},
+                                {q: "Otobüs bagaj hakkım kaç kilogramdır?", a: "Konforlu seyahatiniz için her yolcumuzun bagaj bölümünde 30 kg'a kadar ücretsiz yük taşıma hakkı bulunmaktadır. Değerli eşyalarınızı içeren el bagajlarınızı ise araç içine alabilirsiniz."},
+                                {q: "Evcil hayvanımla otobüs yolculuğu yapabilir miyim?", a: "Evet, aşı karnesi tam ve özel taşıma çantası içinde olan küçük evcil hayvanlarınızla (kedi, küçük ırk köpek, kuş vb.) güvenle seyahat edebilirsiniz. Detaylı bilgi için müşteri hizmetlerimizle iletişime geçebilirsiniz."}
+                            ]
+                        each item, index in faqs
+                            .accordion-item.border-bottom
+                                h3.accordion-header
+                                    button.accordion-button.collapsed.fw-bold.text-dark(type="button" data-bs-toggle="collapse" data-bs-target=`#faq${index}` aria-expanded="false")= item.q
+                                div(id=`faq${index}` class="accordion-collapse collapse" data-bs-parent="#seoFaq")
+                                    .accordion-body.text-muted.lh-lg= item.a
+
+    // 6) ALT GÜVENLİK/BİLGİ ALANI (bg-white)
+    section.py-5.bg-white
         .container.py-3
             .row.g-4
                 .col-md-4.d-flex.align-items-start.justify-content-center.justify-content-md-start
@@ -258,3 +295,45 @@ block content
                     div
                         h4.h6.fw-bold.text-dark KONFORLU SEYAHAT
                         p.small.text-muted.mb-0 Tüm seferlerimiz sizin rahat etmeniz için özel planlanır.
+
+block js
+    // JSON-LD SCHEMA.ORG (GOOGLE'I ÇILDIRTAN KISIM)
+    script(type="application/ld+json").
+        {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": "İnternetten ucuz otobüs bileti nasıl alınır?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Web sitemiz üzerinden kalkış ve varış noktalarınızı seçerek güncel sefer saatlerini sorgulayabilir, size en uygun ve ucuz otobüs biletini 3D Secure güvenli ödeme altyapısıyla saniyeler içinde satın alabilirsiniz."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Bilet iptal ve iade koşulları nelerdir?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Satın aldığınız online otobüs biletlerini, sefer saatine 24 saat kalana kadar web sitemizdeki 'Biletlerim' menüsünden kesintisiz olarak iptal edebilir ve kredi kartınıza tam iade alabilirsiniz."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Otobüs bagaj hakkım kaç kilogramdır?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Konforlu seyahatiniz için her yolcumuzun bagaj bölümünde 30 kg'a kadar ücretsiz yük taşıma hakkı bulunmaktadır. Değerli eşyalarınızı içeren el bagajlarınızı ise araç içine alabilirsiniz."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Evcil hayvanımla otobüs yolculuğu yapabilir miyim?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Evet, aşı karnesi tam ve özel taşıma çantası içinde olan küçük evcil hayvanlarınızla (kedi, küçük ırk köpek, kuş vb.) güvenle seyahat edebilirsiniz. Detaylı bilgi için müşteri hizmetlerimizle iletişime geçebilirsiniz."
+                    }
+                }
+            ]
+        }
