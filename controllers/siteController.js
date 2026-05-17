@@ -251,7 +251,8 @@ exports.paymentComplete = async (req, res) => {
                 p['full-name'] = `${p['first-name']} ${p['last-name']}`;
                 p['email'] = formPayload.email || "";
                 p['phone'] = cleanPhone;
-                p['gov-id'] = ids[seatIndex] || "";
+                p['gov-id'] = null
+                // ids[seatIndex] || "";
                 p['nationality'] = "TR";
                 p['passenger-type'] = 1;
                 p['pnr-code'] = checkoutData.orderCode;

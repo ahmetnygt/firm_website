@@ -1,0 +1,2124 @@
+{
+	"info": {
+		"_postman_id": "096724f8-3e7f-49d1-9952-042830a40d08",
+		"name": "API Destek",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Client Copy",
+			"item": [
+				{
+					"name": "GetSession",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"type\":1,\r\n    \"connection\":{\r\n        \"ip-address\":\"212.***.219.***\", \"port\":\"5117\"\r\n    },\r\n    \"browser\":{\r\n        \"name\":\"Chrome\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}client/getsession",
+							"host": [
+								"{{url}}client"
+							],
+							"path": [
+								"getsession"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetParameters",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{        \n    \"category\":\"Web\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}client/getparameters",
+							"host": [
+								"{{url}}client"
+							],
+							"path": [
+								"getparameters"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UserLogin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"token\", jsonData.data.token.data);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\":{\n        \"username\":\"{{username}}\",\n        \"password\":\"{{password}}\",\n        \"remember-me\":0,\n        \"partner-code\": \"corp\", //corptest/vik/alanyalilar\n        \"branch-id\": \"1561\"         //10822//244//9966// 1561 corp\n    },\n    \"device-session\":{\n         \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n    },\n    \"date\":\"2020-02-24T18:03:00\",\n    \"language\":\"tr-TR\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}membership/userlogin",
+							"host": [
+								"{{url}}membership"
+							],
+							"path": [
+								"userlogin"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Web herşey burda Copy",
+			"item": [
+				{
+					"name": "GetPartnerWebSettings",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"data\": null,\n    \"device-session\": {\n       \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n\t},\n    \"date\":\"2019-11-1T11:40:00\",\n    \"language\":\"tr-TR\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/GetPartnerWebSettings",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"GetPartnerWebSettings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetWebLastMinuteSales",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\n\n{\n\"data\": {\n\"start-date\": \"2024-03-20 00:00:00\",\n\"end-date\": \"2025-05-26 00:00:00\",\n\"token\": \"{{token}}\"\n},\n\"token\": \"null\",\n\"device-session\": {\n\"session-id\": \"{{sessionId}}\",\n\"device-id\": \"{{deviceId}}\",\n\"date\": \"2019-12-13T15:11:01.6608738+03:00\",\n\"language\": \"tr-TR\"\n}\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/GetWebLastMinuteSales",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"GetWebLastMinuteSales"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetRefundDeductionList",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"data\": null,\n    \"device-session\": {\n       \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n\t},\n    \"date\":\"2019-11-1T11:40:00\",\n    \"language\":\"tr-TR\"\n}\n\n\n\n"
+						},
+						"url": {
+							"raw": "{{url}}web/GetRefundDeductionList",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"GetRefundDeductionList"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetParameter",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"data\": null,\r\n\"device-session\": {\r\n\"session-id\": \"{{sessionId}}\",\r\n\"device-id\": \"{{deviceId}}\"\r\n},\r\n\"date\": \"2016-03-11T11:33:00\",\r\n\"language\": \"tr-TR\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}web/getparametersforobilet",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"getparametersforobilet"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetStations",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"data\": null,\r\n    \"token\": null,\r\n    \"device-session\": {\r\n        \"session-id\": \"{{sessionId}}\",\r\n        \"device-id\": \"{{deviceId}}\"\r\n    },\r\n    \"date\": \"2019-12-13T15:11:01.6608738+03:00\",\r\n    \"language\": \"tr-TR\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}web/getstations",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"getstations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetRoutes",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"data\": 955,\n    \"device-session\": {\n        \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n\t},\n    \"date\":\"2016-03-11T11:33:00\",\n    \"language\":\"tr-TR\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/getroutes",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"getroutes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetJourneys",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"data\": {\n\t\t\"origin\":  206,\n\t\t\"destination\": 215,\n\t\t\"from\": \"2025-04-15T00:00:00.00Z\",\n\t\t\"to\": \"2025-04-18T00:00:00.000Z\"\n\t},\n    \"device-session\": {\n          \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n\t},\n    \"date\":\"2016-03-11T11:33:00\",\n    \"language\":\"tr-TR\"\n}\n\n"
+						},
+						"url": {
+							"raw": "{{url}}web/getjourneys",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"getjourneys"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetJourneySeats",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"data\": \"1724159-4518-4544\",\n    \"device-session\": {\n        \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n\t},\n    \"date\":\"2016-03-11T11:33:00\",\n    \"language\":\"tr-TR\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}web/getjourneyseats",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"getjourneyseats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reservation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"data\": {\r\n    \"journey-id\": \"1172970-3491-3508\",\r\n    \"order-code\": \"15812828\",\r\n    \"passengers\": [\r\n      {\r\n        \"id\": 155255,\r\n        \"first-name\": \"TEST\",\r\n        \"last-name\": \"DENEME\",\r\n        \"full-name\" : \"TEST DENEME\",\r\n        \"email\": \"{{email}}\",\r\n        \"phone\": \"TELEFON\",\r\n        \"gender\": true,\r\n        \"pnr-code\": \"ABC\",\r\n        \"price\": 110,\r\n        \"nationality\": \"TR\",\r\n        \"passenger-type\": 1,\r\n        \"seat-number\": 11,\r\n        \"gov-id\": \"TC/PASAPORT\",\r\n        \"service-id\": null\r\n      }\r\n    ]\r\n  },\r\n  \"token\": null,\r\n  \"device-session\": {\r\n        \"session-id\": \"{{sessionId}}\",\r\n        \"device-id\": \"{{deviceId}}\"\r\n  },\r\n  \"date\": \"2019-10-09T12:45:53.7340663+03:00\",\r\n  \"language\": \"tr-TR\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/Reservation",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"Reservation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Prepare Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"data\": {\r\n        \"journey-id\": \"1651392-11281-11279\",\r\n        \"passengers\": [\r\n            {\r\n                \"gender\": true,\r\n                \"seat-number\": 1,\r\n                \"price\": 15,\r\n                \"name\": \"TEST\",\r\n                \"surname\": \"DENEME\",\r\n                \"full-name\": \"TEST DENEME\"\r\n            }\r\n        ]\r\n    },\r\n    \"token\": null,\r\n    \"device-session\": {\r\n        \"session-id\": \"{{sessionId}}\",\r\n        \"device-id\": \"{{deviceId}}\"\r\n    },\r\n    \"date\": \"2020-08-11T11:29:02.7390031+00:00\",\r\n    \"language\": \"tr-TR\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}web/PrepareOrder",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"PrepareOrder"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Purchase",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"data\": {\r\n        \"journey-id\": \"54690-202-206\",\r\n        \"order-code\": \"HU000KFVP\",\r\n        \"payment\": {\r\n            \"payment\": {\r\n                \"type\": \"none\"\r\n                \r\n            }\r\n        },\r\n        \"fail-uri\": \"http://cortur.obus.com.tr/common/completepurhcase/287-6639\",\r\n        \"success-uri\": \"http://cortur.obus.com.tr/common/completepurhcase/287-6639\",\r\n        \"service-id\": 12,\r\n        \"passengers\": [\r\n            {\r\n                \"id\": 1296206,\r\n                \"full-name\": \"TEST DENEME\",\r\n                \"first-name\": \"TEST\",\r\n                \"last-name\": \"DENEME\",\r\n                \"hes-code\": \"A12345\",\r\n                \"email\": \"{{email}}\",\r\n                \"phone\": \"TELEFON\",\r\n                \"gender\": true,\r\n                \"pnr-code\": \"PNR\",\r\n                \"price\": 1,\r\n                \"nationality\": \"TR\",\r\n                \"passenger-type\": 1,\r\n                \"seat-number\": 1,\r\n                \"gov-id\": \"TC/PASAPORT\",\r\n                \"passport-number\": null,\r\n                \"service-id\": null,\r\n                \"discount-code\": null\r\n            }\r\n        ]\r\n    },\r\n    \"device-session\": {\r\n        \"session-id\": \"{{sessionId}}\",\r\n        \"device-id\": \"{{deviceId}}\"\r\n    },\r\n    \"date\": \"2020-09-28T11:16:39.9073002+00:00\",\r\n    \"language\": \"tr-TR\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}web/purchase",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"purchase"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CompleteOrder",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"data\": {\r\n    \"order-code\": \"OBDEMM34GX2RZVS\",\r\n    \"data\": {\r\n      \"xid\": \"DUMMY_XID\",\r\n      \"mdstatus\": \"1\",\r\n      \"mderrormessage\": \"Authenticated detail=( ) vendorCode=\",\r\n      \"txnstatus\": \"Y\",\r\n      \"eci\": \"05\",\r\n      \"cavv\": \"DUMMY_CAVV\",\r\n      \"paressyntaxok\": \"true\",\r\n      \"paresverified\": \"false\",\r\n      \"version\": \"2.0\",\r\n      \"ireqcode\": \"\",\r\n      \"ireqdetail\": \" \",\r\n      \"vendorcode\": \"\",\r\n      \"cavvalgorithm\": \"2\",\r\n      \"md\": \"DUMMY_MD_HASH\",\r\n      \"terminalid\": \"10023530,10023530\",\r\n      \"oid\": \"OBDEMM34GX2RZVS\",\r\n      \"authcode\": \" \",\r\n      \"response\": \"Declined\",\r\n      \"errmsg\": \"CustomerIPAddress field must contain a valid ip address\",\r\n      \"hostmsg\": \"Giriş yaptığınız değerleri kontrol ediniz\",\r\n      \"procreturncode\": \"92\",\r\n      \"transid\": \"OBDEMM34GX2RZVS\",\r\n      \"hostrefnum\": \"\",\r\n      \"rnd\": \"DUMMY_RND\",\r\n      \"hash\": \"DUMMY_HASH\",\r\n      \"hashparams\": \"clientid:oid:authcode:procreturncode:response:mdstatus:cavv:eci:md:rnd:\",\r\n      \"hashparamsval\": \"DUMMY_HASHPARAMSVAL\",\r\n      \"clientid\": \"10023530\",\r\n      \"MaskedPan\": \"455******0000\",\r\n      \"successurl\": \"http://localhost:50426/banka-odeme/4\",\r\n      \"cardholder\": \"TEST DENEME\",\r\n      \"orderid\": \"OBDEMM34GX2RZVS\",\r\n      \"txntype\": \"sales\",\r\n      \"terminalmerchantid\": \"9819293\",\r\n      \"txnamount\": \"100\",\r\n      \"terminaluserid\": \"PROVAUT\",\r\n      \"mode\": \"PROD\",\r\n      \"txncurrencycode\": \"949\",\r\n      \"secure3dhash\": \"DUMMY_SECURE3DHASH\",\r\n      \"apiversion\": \"v0.1\",\r\n      \"companyname\": \"oBilet.com\",\r\n      \"errorurl\": \"http://localhost:50426/banka-odeme/4\",\r\n      \"secure3dsecuritylevel\": \"3D_FULL\",\r\n      \"customeremailaddress\": \"{{email}}\",\r\n      \"customeripaddress\": \"0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.1\",\r\n      \"terminalprovuserid\": \"PROVAUT\"\r\n    }\r\n  },\r\n  \"token\": null,\r\n  \"device-session\": {\r\n    \"session-id\": \"{{sessionId}}\",\r\n        \"device-id\": \"{{deviceId}}\"\r\n  },\r\n  \"date\": \"2019-09-20T13:41:04.235894+03:00\",\r\n  \"language\": \"tr-TR\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}common/CompletePurchase",
+							"host": [
+								"{{url}}common"
+							],
+							"path": [
+								"CompletePurchase"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SearchOrder",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"data\": {\n\t\t\"pnr-code\": \"7V000UR4R\",\n\t\t\"search-text\": \"\",\n\t\t\"open-ticket-search\": false\n\t},\n    \"device-session\": {\n        \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n\t},\n    \"date\":\"2016-03-11T11:33:00\",\n    \"language\":\"tr-TR\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}web/searchorder",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"searchorder"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetInCityServicePoints",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"data\": {\r\n\t\t\"partner-id\": null,\r\n\t\t\"in-city-service-id\": null,\r\n\t\t\"station-id\": 4525, \r\n\t\t\"journey-Id\": 1724539\r\n    },\r\n    \"token\": null,\r\n    \"device-session\": {\r\n        \"session-id\": \"{{sessionId}}\",\r\n        \"device-id\": \"{{deviceId}}\"\r\n    },\r\n    \"date\": \"2019-10-09T12:45:53.7340663+03:00\",\r\n    \"language\": \"tr-TR\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}web/GetInCityServicePoints",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"GetInCityServicePoints"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "WebAgentLogsByDate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"data\": {\r\n        \"start-date\": \"2024-09-20T00:00:00.00Z\",\r\n        \"end-date\": \"2024-12-30T00:00:00.00Z\",\r\n        \"is-order-creation-time\":1\r\n    },\r\n\t\"device-session\": {\r\n        \"session-id\": \"{{sessionId}}\",\r\n        \"device-id\": \"{{deviceId}}\"\r\n\t},\r\n\t\"date\": \"2016-03-11T11:33:00\",\r\n\t\"language\": \"tr-TR\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}web/WebAgentLogsByDate",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"WebAgentLogsByDate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetJourneyTicketList",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n\t\"data\": {\n        \"start-date\": \"2025-03-16T15:07:00.00Z\",\n        \"end-date\": \"2025-04-17T15:15:00.00Z\",\n        \"is-order-creation-time\":1\n    },\n\t\"device-session\": {\n          \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n\t},\n\t\"token\": \"{{token}}\",\n\t\"date\": \"2016-03-11T11:33:00\",\n\t\"language\": \"tr-TR\"\n}\n\n  \n  \n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}web/GetJourneyTicketList",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"GetJourneyTicketList"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetJourneysSinceLastThreeDays",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"origin\":  4121,\n        \"destination\": 4674,\n        \"from\": \"2024-05-10T00:00:00.00Z\",\n        \"to\": \"2024-05-15T00:00:00.000Z\"\n    },\n    \"device-session\": {\n          \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n    },\n    \"date\":\"2016-03-11T11:33:00\",\n    \"language\":\"tr-TR\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/GetJourneysSinceLastThreeDays",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"GetJourneysSinceLastThreeDays"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CancellationPnrAnalysis",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"data\": {\r\n    \"pnr-code\": \"8F00005Z8\",\r\n    \"seat-number\": 26\r\n  },\r\n  \"device-session\": {\r\n        \"session-id\": \"{{sessionId}}\",\r\n        \"device-id\": \"{{deviceId}}\"\r\n  },\r\n  \"date\": \"2019-10-09T12:45:53.7340663+03:00\",\r\n  \"language\": \"tr-TR\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}web/CancellationPnrAnalysis",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"CancellationPnrAnalysis"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetStationsWithCommunication",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"data\": null,\r\n    \"token\": null,\r\n    \"device-session\": {\r\n        \"session-id\": \"{{sessionId}}\",\r\n        \"device-id\": \"{{deviceId}}\"\r\n    },\r\n    \"date\": \"2019-12-13T15:11:01.6608738+03:00\",\r\n    \"language\": \"tr-TR\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}web/GetStationsWithCommunication",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"GetStationsWithCommunication"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CheckDiscountCode",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"data\": {\r\n        \"code\": \"836133\",\r\n        \"journey-id\": 7833,\r\n        \"origin-id\": 188,\r\n        \"destination-id\": 189\r\n    },\r\n    \"token\": null,\r\n    \"device-session\": {\r\n        \"session-id\": \"{{sessionId}}\",\r\n        \"device-id\": \"{{deviceId}}\"\r\n    },\r\n    \"date\": \"2020-02-12T08:09:32.8108419+00:00\",\r\n    \"language\": \"tr-TR\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/CheckDiscountCode",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"CheckDiscountCode"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetServices",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"data\": null,\n    \"device-session\": {\t\t\n        \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n\t},\n    \"date\":\"2016-03-11T11:33:00\",\n    \"language\":\"tr-TR\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/GetServices",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"GetServices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetJourneySeatsWithMainDriver",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"data\": \"1496345-4516-4544\",\n    \"device-session\": {\n        \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n\t},\n    \"date\":\"2016-03-11T11:33:00\",\n    \"language\":\"tr-TR\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}web/GetJourneySeatsWithMainDriver",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"GetJourneySeatsWithMainDriver"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SearchOrderWithSeatHistory",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"data\": {\n\t\t\"pnr-code\": \"7V000RR8V\",\n\t\t\"search-text\": \"\",\n\t\t\"open-ticket-search\": false,\n        \"show-all-states\": true\n\t},\n    \"device-session\": {\n        \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n\t},\n    \"date\":\"2016-03-11T11:33:00\",\n    \"language\":\"tr-TR\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}web/SearchOrderWithSeatHistory",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"SearchOrderWithSeatHistory"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Purchase With Open Passenger",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"data\": {\r\n       \"journey-id\": \"7152-140-175\",\r\n       \"order-code\": \"OBDEMZB8EWWU5PR\",\r\n       \"passengers\": [\r\n           {\r\n               \"id\": 51860,\r\n               \"first-name\": \"TEST\",\r\n               \"last-name\": \"DENEME\",\r\n               \"email\": \"{{email}}\",\r\n               \"phone\": \"TELEFON\",\r\n               \"gender\": true,\r\n               \"pnr-code\": \"OBDEMZB8EWWU5PR\",\r\n               \"price\": 1,\r\n               \"nationality\": null,\r\n               \"passenger-type\": 1,\r\n               \"seat-number\": 17,\r\n               \"gov-id\": \"TC/PASAPORT\",\r\n               \"service-id\": null,\r\n               \"open-passenger-id\": 50605\r\n           }\r\n       ]\r\n   },\r\n   \"token\": null,\r\n   \"device-session\": {\r\n       \"session-id\": \"{{sessionId}}\",\r\n        \"device-id\": \"{{deviceId}}\"\r\n   },\r\n   \"date\": \"2019-10-22T16:37:26.9670633+03:00\",\r\n   \"language\": \"tr-TR\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/PurchaseWithOpenPassenger",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"PurchaseWithOpenPassenger"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetPassenger",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"data\": {\n        \"id\": 1262811,\n        \"passengers\": [{\n            \"id\": 2038803\n        }]\n    },\n    \"device-session\": {\n        \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n\t},\n    \"date\":\"2016-03-11T11:33:00\",\n    \"language\":\"tr-TR\"\n}\n\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}web/GetPassengers",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"GetPassengers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetPassengersWithSeatHistory",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"data\": {\n        \"id\": 1262811,\n        \"passengers\": [{\n            \"id\": 2038803\n        }]\n    },\n    \"device-session\": {\n        \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n\t},\n    \"date\":\"2016-03-11T11:33:00\",\n    \"language\":\"tr-TR\"\n}\n\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}web/GetPassengersWithSeatHistory",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"GetPassengersWithSeatHistory"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RegisterCustomer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"data\": {\n\t\t\"email\": \"{{email}}\",\n        \"first-name\" : \"TEST\",\n        \"last-name\" : \"DENEME\",\n\t\t\"gender\": true,\n\t\t\"password\": \"{{password}}\",\n\t\t\"phone\": \"TELEFON\",\n        \"use-passport\": true,\n        \"passpord-number\": \"TC/PASAPORT\",\n\t\t\"gov-id\": null,\n\t\t\"nationality\": \"TR\"\n\t},\n    \"device-session\": {\n       \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n\t},\n    \"date\":\"2016-03-11T11:33:00\",\n    \"language\":\"tr-TR\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/registercustomer",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"registercustomer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateCustomer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"data\": {\n        \"id\" : 1100104,\n        \"first-name\": \"TEST\",\n        \"last-name\": \"DENEME\",\n\t\t\"email\": \"{{email}}\",\n\t\t\"gov-id\": \"TC/PASAPORT\",\n        \"phone\" : \"TELEFON\",\n\t\t\"gender\": true\n        //\"nationality\": \"TY\"\n\t},\n\t\"token\": \"{{token}}\",\n    \"device-session\": {\n          \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n\t},\n    \"date\":\"2016-03-11T11:33:00\",\n    \"language\":\"tr-TR\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/UpdateCustomerUser",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"UpdateCustomerUser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCustomerTickets",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"data\": null,\t\n\t\"device-session\": {\n        \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n\t},\n\t\"token\": \"{{token}}\",\n    \"date\":\"2016-03-11T11:33:00\",\n    \"language\":\"tr-TR\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/getcustomertickets",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"getcustomertickets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCustomerBookings",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"data\": null,\t\n\t\"token\": \"{{token}}\",\n    \"device-session\": {\n        \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n\t},\n    \"date\":\"2016-03-11T11:33:00\",\n    \"language\":\"tr-TR\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/getcustomerbookings",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"getcustomerbookings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCustomerPoints",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"data\": null,\t\n\t\"token\": \"{{token}}\",\n    \"device-session\": {\n       \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n\t},\n    \"date\":\"2016-03-11T11:33:00\",\n    \"language\":\"tr-TR\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/getcustomerpoints",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"getcustomerpoints"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCustomerUser",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": \"{{token}}\",\n    \"token\": \"{{token}}\",\n    \"device-session\": {\n        \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n    },\n    \"date\": \"2020-08-07T13:44:22.9733984+03:00\",\n    \"language\": \"tr-TR\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/getcustomeruser",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"getcustomeruser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CustomerLogin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"data\": {\n\t\t\"partner-code\": \"cortur\",\n\t\t\"username\": \"{{email}}\",\n\t\t\"password\": \"{{password}}\",\n\t\t\"remember-me\": true\n\t},\n    \"device-session\": {\n         \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n\t},\n    \"date\":\"2016-03-11T11:33:00\",\n    \"language\":\"tr-TR\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/customerlogin",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"customerlogin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ForgotCustomerPassword",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": \"{{email}}\",\n       \"device-session\":{\n         \"session-id\": \"{{sessionId}}\",\n         \"device-id\": \"{{deviceId}}\"\n  },\n    \"date\":\"2016-03-11T11:33:00\",\n    \"language\":\"tr-TR\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/ForgotCustomerPassword",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"ForgotCustomerPassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CustomerChangePassword",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"new-password\": \"{{password}}\",\n        \"old-password\": \"{{password}}\",\n        \"token\": null\n        },\n       \"device-session\":{\n         \"session-id\": \"{{sessionId}}\",\n         \"device-id\": \"{{deviceId}}\"\n  },\n    \"date\":\"2016-03-11T11:33:00\",\n    \"language\":\"tr-TR\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/ChangeCustomerPassword",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"ChangeCustomerPassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Reservation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"data\": {\r\n    \"id\": 27906,\r\n    \"passengers\": [\r\n      {\r\n        \"id\": 50504\r\n      }\r\n    ]\r\n  },\r\n  \"token\": \"{{token}}\",\r\n  \"device-session\": {\r\n        \"session-id\": \"{{sessionId}}\",\r\n        \"device-id\": \"{{deviceId}}\"\r\n\t},\r\n  \"date\": \"2019-10-09T12:45:53.7340663+03:00\",\r\n  \"language\": \"tr-TR\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/CancelReservation",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"CancelReservation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Open Passengers",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"data\": {\r\n    \"id\": 27905,\r\n    \"passengers\": [\r\n      {\r\n        \"id\": 50503\r\n      }\r\n    ]\r\n  },\r\n  \"token\": null,\r\n  \"device-session\": {\r\n        \"session-id\": \"{{sessionId}}\",\r\n        \"device-id\": \"{{deviceId}}\"\r\n\t},\r\n  \"date\": \"2019-10-09T12:45:53.7340663+03:00\",\r\n  \"language\": \"tr-TR\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/OpenPassengers",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"OpenPassengers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refund Passengers",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"data\": {\r\n    \"id\": 1847458,\r\n    \"origin-id\":\"4121\",\r\n    \"destination-id\":\"4677\",\r\n    \"refund-type\":\"Card\",\r\n    \"passengers\": [\r\n      {\r\n        \"id\": 2845801,\r\n        \"refund-deduction-id\": 8\r\n      }\r\n    ],\r\n    \"refund-branch-id\":\"\",\r\n    \"refund-user-id\":\"\",\r\n    \"is-last-minute-refund\":true,\r\n    \"15_dk_is_last_minute_refund\":true\r\n  },\r\n  \"token\": null,\r\n  \"device-session\": {\r\n    \"session-id\": \"{{sessionId}}\",\r\n        \"device-id\": \"{{deviceId}}\"\r\n    },\r\n  \"date\": \"2019-10-09T12:45:53.7340663+03:00\",\r\n  \"language\": \"tr-TR\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/RefundPassengers",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"RefundPassengers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PurchaseStatus",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"data\": {\r\n    \"order-code\": \"OBOZLPMY2QGCDNT\"\r\n  },\r\n  \"device-session\": {\r\n    \"session-id\": \"{{sessionId}}\",\r\n        \"device-id\": \"{{deviceId}}\"\r\n  },\r\n  \"date\": \"2019-08-23T15:14:33+03:00\",\r\n  \"language\": \"tr-TR\",\r\n  \"token\": \"{{token}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/purchasestatus",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"purchasestatus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCountries",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"data\": null,\n    \"device-session\": {\n        \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n\t},\n    \"date\":\"2016-03-11T11:33:00\",\n    \"language\":\"tr-TR\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/GetCountries",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"GetCountries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Contact Us",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"data\": {\n\t\t\"email\": \"{{email}}\",\n\t\t\"full-name\": \"TEST DENEME\",\n\t\t\"subject\": \"Şikayet var\",\n\t\t\"message\": \"şikayetim var\"\n\t},\n    \"device-session\": {\n        \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n\t},\n    \"date\":\"2016-03-11T11:33:00\",\n    \"language\":\"tr-TR\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/ContactUs",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"ContactUs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetJourneyShuttles",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"data\": \"842-13-54\",\n    \"token\": \"{{token}}\",\n    \"device-session\": {\n        \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n\t},\n    \"date\":\"2016-03-11T11:33:00\",\n    \"language\":\"tr-TR\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/getjourneyshuttles",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"getjourneyshuttles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetSession",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"type\":1,\n  \"connection\":{\n        \"ip-address\":\"212.***.219.***\", \"port\":\"5117\"\n    },\n    \"browser\":{\n        \"name\":\"Chrome\"\n    }\n}"
+						},
+						"url": {
+							"raw": "{{url}}client/getsession",
+							"host": [
+								"{{url}}client"
+							],
+							"path": [
+								"getsession"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeletePendingOrder",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"data\": 123,\r\n    \"token\": null,\r\n    \"device-session\": {\r\n        \"session-id\": \"{{sessionId}}\",\r\n        \"device-id\": \"{{deviceId}}\"\r\n    },\r\n    \"date\": \"2020-09-28T11:16:39.9073002+00:00\",\r\n    \"language\": \"tr-TR\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}web/DeletePendingOrder",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"DeletePendingOrder"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetBranches",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"data\": null,\n    \"device-session\": {\n        \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n\t},\n\t\"token\": \"{{token}}\",\n    \"date\":\"2016-03-11T11:33:00\",\n    \"language\":\"tr-TR\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/membership/getusers",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"membership",
+								"getusers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetPDF",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}",
+								"type": "text"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"data\": {\r\n\t\t\"pnr-code\": \"6F002TKT6\",\r\n\t\t\"phone\": \"TELEFON\"\r\n\t},\r\n    \"token\": \"{{token}}\" ,\r\n    \"device-session\": {\r\n        \"session-id\": \"{{sessionId}}\",\r\n        \"device-id\": \"{{deviceId}}\"\r\n\t},\r\n    \"date\":\"2016-03-11T11:33:00\",\r\n    \"language\":\"tr-TR\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/getpdf",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"getpdf"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GeteticketPDF",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}",
+								"type": "text"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n{\r\n    \"data\": {\r\n        \"pnr-code\": \"8G000479V\",\r\n        \"phone\": \"TELEFON\"\r\n    },\r\n    \"token\": \"{{token}}\" ,\r\n    \"device-session\": {\r\n    \"session-id\": \"{{sessionId}}\",\r\n    \"device-id\": \"{{deviceId}}\"\r\n    },\r\n    \"date\":\"2016-03-11T11:33:00\",\r\n    \"language\":\"tr-TR\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/geteticketpdf",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"geteticketpdf"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "BindOpenPassengerToJourney",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": {\n        \"pnr-code\":\"OHAS68UC\"\n         //,\"journey-id\": 132465 \n    },\n    \"device-session\":{\n        \"session-id\": \"{{sessionId}}\",\n        \"device-id\": \"{{deviceId}}\"\n    },\n\t\"token\": \"{{token}}\",\n    \"date\":\"2016-03-11T11:33:00\",\n    \"language\":\"tr-TR\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}web/BindOpenPassengerToJourney",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"BindOpenPassengerToJourney"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetPartner",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}",
+								"type": "text"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"data\": \"haslaymak3\",\r\n    \"token\": null,\r\n    \"device-session\": {\r\n        \"session-id\": \"{{sessionId}}\",\r\n        \"device-id\": \"{{deviceId}}\"\r\n    },\r\n    \"date\": \"2019-12-13T15:11:01.6608738+03:00\",\r\n    \"language\": \"tr-TR\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}web/GetPartner",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"GetPartner"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetPassengersInfo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}",
+								"type": "text"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"data\": {\r\n        \"is-process-Time\": \"true\",\r\n        \"first-process-time\": \"2023-03-01T00:00:00.s00Z\",\r\n        \"second-process-time\": \"2023-037-26T00:00:00.000Z\"\r\n    },\r\n    \"device-session\": {\r\n          \"session-id\": \"{{sessionId}}\",\r\n        \"device-id\": \"{{deviceId}}\"\r\n    },\r\n    \"date\":\"2016-03-11T11:33:00\",\r\n    \"language\":\"tr-TR\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}web/GetTicketsWithPassengerInfo",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"GetTicketsWithPassengerInfo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PartnerPassengersInfo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}",
+								"type": "text"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n    \"data\": {\r\n        \"process-date\": \"2024-07-01T00:00:00.00Z\"\r\n    },\r\n   \"device-session\": {\r\n        \"session-id\": \"{{sessionId}}\",\r\n        \"device-id\": \"{{deviceId}}\"\r\n\t},\r\n    \"date\":\"2016-03-11T11:33:00\",\r\n    \"language\":\"tr-TR\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}web/PartnerPassengersInfo",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"PartnerPassengersInfo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetLicensePlateByPnrCode",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}",
+								"type": "text"
+							},
+							{
+								"key": "PartnerCode",
+								"value": "cortur",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n    \"data\": \"7V001VRKD\",\r\n    \"device-session\": {\r\n      \r\n         \"session-id\": \"{{sessionId}}\",\r\n        \"device-id\": \"{{deviceId}}\"\r\n    },\r\n     \r\n    \"date\":\"2024-08-13T14:33:00\",\r\n    \"language\": \"tr-TR\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}web/GetLicensePlateByPnrCode",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"GetLicensePlateByPnrCode"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LastMinuteRefundPassengerInfoStrategy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic {{basic_auth}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"data\": {\r\n\t\t\"start-date\": \"2024-04-01T00:00:00.00Z\",\r\n        \"end-date\": \"2024-08-31T00:00:00.00Z\"\r\n  },\r\n  \"device-session\": {\r\n        \"session-id\": \"{{sessionId}}\",\r\n        \"device-id\": \"{{deviceId}}\"\r\n  },\r\n  \"date\": \"2019-10-09T12:45:53.7340663+03:00\",\r\n  \"language\": \"tr-TR\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}web/LastMinuteRefundPassengerInfoStrategy",
+							"host": [
+								"{{url}}web"
+							],
+							"path": [
+								"LastMinuteRefundPassengerInfoStrategy"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

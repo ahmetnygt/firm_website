@@ -1,0 +1,18 @@
+METOT VE URL:
+POST https://api-coreprod-cluster11.obus.com.tr/api/client/getsession
+
+HEADERS (Başlıklar):
+Content-Type: application/json
+Authorization: Basic RXJ0dVNlcmRhclNlbWloRGF2aWROdXJl
+
+BODY (JSON Formatında):
+{
+  "type": 1,
+  "connection": {
+    "ip-address": "212.156.219.182",
+    "port": "5117"
+  },
+  "browser": {
+    "name": "Chrome"
+  }
+}
