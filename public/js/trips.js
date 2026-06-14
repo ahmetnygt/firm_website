@@ -1,10 +1,9 @@
-let ticketPairs = []; // Sepeti tutacağımız dizi (bunu silmişim amk)
+let ticketPairs = [];
 let selectedSeat = null;
 let selectedTrip = null;
 
-// Senin orijinal efsanevi SVG koltuk motorun
+// Efsanevi SVG koltuk motorun
 function getSeatSvg(fill, stroke, textStr, textColor) {
-    // x ve y merkezlendi, dominant-baseline ile tam ortaya sabitlendi
     const textHtml = textStr !== '' ?
         `<text x="50" y="60" dominant-baseline="middle" text-anchor="middle" fill="${textColor}" font-size="28px" font-weight="bold">${textStr}</text>` : '';
 
@@ -41,12 +40,13 @@ $(".trip").off().on("click", async function (e) {
 
     if (!$trip.data("loaded")) {
         // 🔥 SKELETON LOADING
-        let skeletonHtml = '<div class="d-flex flex-column-reverse gap-1 placeholder-glow overflow-auto">';
-        for (let col = 1; col <= 5; col++) {
-            skeletonHtml += '<div class="d-flex flex-row gap-1">';
-            for (let row = 1; row <= 8; row++) {
-                if (col === 3) {
-                    skeletonHtml += '<div style="width:2.75rem; height:3rem;"></div>';
+        let skeletonHtml = '<div class="d-flex flex-row gap-2 placeholder-glow overflow-auto p-3">';
+        skeletonHtml += '<div class="d-flex flex-column justify-content-end pb-3 me-3"><div class="placeholder" style="width:2rem; height:2rem; border-radius:50%;"></div></div>';
+        for (let col = 1; col <= 10; col++) {
+            skeletonHtml += '<div class="d-flex flex-column gap-1">';
+            for (let row = 1; row <= 4; row++) {
+                if (row === 3) {
+                    skeletonHtml += '<div style="width:2.75rem; height:3rem;"></div>'; // Koridor
                 } else {
                     skeletonHtml += '<div class="placeholder" style="width:2.75rem; height:3rem; border-radius:10px !important;"></div>';
                 }
@@ -61,8 +61,9 @@ $(".trip").off().on("click", async function (e) {
             const res = await fetch(`/api/journey-seats/${tripId}`);
             const json = await res.json();
 
-            if (json.status === "Success" && json.data && json.data.seats) {
-                renderSeatsHorizontal($seatMap, json.data.seats.cells, tripId);
+            // YENİ GÖTÜR API ENTEGRASYONU
+            if (json.success && json.busPlanBinary) {
+                renderGoturSeats($seatMap, json.busPlanBinary, json.tickets || {}, tripId);
                 $trip.data("loaded", true);
             } else {
                 $seatMap.html('<div class="text-danger text-center w-100 py-4 fw-bold">Koltuk bilgisi alınamadı.</div>');
@@ -73,74 +74,79 @@ $(".trip").off().on("click", async function (e) {
     }
 });
 
-function renderSeatsHorizontal($container, cells, tripId) {
-    if (!cells || !cells.length) return;
+// ESKİ OBİLET ÇÖPÜ GİTTİ, YERİNE JİLET GİBİ GÖTÜR RENDER'I GELDİ
+function renderGoturSeats($container, planBinary, tickets, tripId) {
+    if (!planBinary) return;
 
     $container.empty();
-    $container.addClass("d-flex flex-column-reverse gap-1 overflow-auto");
+    $container.addClass("d-flex flex-row gap-2 overflow-auto align-items-center p-3");
 
-    const maxRow = Math.max(...cells.map(c => c.row));
-    const maxCol = Math.max(...cells.map(c => c.col));
+    let seatCounter = 1;
+    const cols = 4; // 2+1 Otobüs (Koltuk, Koltuk, Koridor, Koltuk)
 
-    for (let c = 1; c <= maxCol; c++) {
-        const $rowDiv = $('<div class="d-flex flex-row gap-1"></div>');
+    const rows = [];
+    for (let i = 0; i < planBinary.length; i += cols) {
+        rows.push(planBinary.substring(i, i + cols));
+    }
 
-        for (let r = 1; r <= maxRow; r++) {
-            const cell = cells.find(x => x.row === r && x.col === c);
+    const $driverCol = $('<div class="d-flex flex-column justify-content-end pb-3 me-3" style="min-width:3rem;"><i class="bi bi-steering text-muted fs-2"></i></div>');
+    $container.append($driverCol);
+
+    rows.forEach((rowData) => {
+        const $colDiv = $('<div class="d-flex flex-column gap-1"></div>');
+
+        for (let s = 0; s < rowData.length; s++) {
+            const char = rowData[s];
             let html = '';
 
-            if (!cell || cell.type === 'None') {
+            if (char === '0') {
                 html = '<div style="width:2.75rem; height:3rem;"></div>';
             } else {
-                const seatNo = cell.seat !== 0 ? cell.seat : '';
-                let fill, stroke, textC;
+                const currentSeatNo = seatCounter++;
+                const ticketInfo = tickets[currentSeatNo.toString()];
 
-                const isAvailable = cell.type && cell.type.startsWith('Available');
+                let fill, stroke, textC, isAvailable, availType;
 
-                if (isAvailable) {
-                    fill = "#FFFFFF"; stroke = "#b4b4b4"; textC = "#000000";
-                } else if (cell.type === 'TakenM' || (cell.type.includes('Taken') && cell.gender === true)) {
-                    fill = "#D6EAF8"; stroke = "#3498DB"; textC = "#1F618D";
-                } else if (cell.type === 'TakenF' || (cell.type.includes('Taken') && cell.gender === false)) {
-                    fill = "#F8BBD0"; stroke = "#C2185B"; textC = "#FFFFFF";
-                } else if (cell.type === 'Driver') {
-                    html = `<div class="d-flex align-items-center justify-content-center" style="width:2.75rem; height:3rem;"><i class="bi bi-steering text-muted fs-3"></i></div>`;
-                } else if (cell.type === 'Door') {
-                    html = `<div class="d-flex align-items-center justify-content-center" style="width:2.75rem; height:3rem;"><i class="bi bi-door-open text-muted fs-3"></i></div>`;
+                if (ticketInfo) {
+                    isAvailable = false;
+                    const g = ticketInfo.gender ? ticketInfo.gender.toUpperCase() : 'M';
+                    if (g === 'M' || g === 'ERKEK') {
+                        fill = "#D6EAF8"; stroke = "#3498DB"; textC = "#1F618D"; availType = "TakenM";
+                    } else {
+                        fill = "#F8BBD0"; stroke = "#C2185B"; textC = "#FFFFFF"; availType = "TakenF";
+                    }
                 } else {
-                    fill = "#f8f9fa"; stroke = "#dee2e6"; textC = "#adb5bd";
+                    isAvailable = true;
+                    fill = "#FFFFFF"; stroke = "#b4b4b4"; textC = "#000000";
+                    availType = "Available";
                 }
 
-                if (!html) {
-                    html = `
-                    <div class="trip_seat" 
-                         data-is-available="${isAvailable}" 
-                         data-available-type="${cell.type}" 
-                         data-seat-number="${cell.seat}" 
-                         data-trip="${tripId}"
-                         style="cursor:${isAvailable ? 'pointer' : 'not-allowed'}; outline: none;">
-                        ${getSeatSvg(fill, stroke, seatNo, textC)}
-                    </div>`;
-                }
+                html = `
+                <div class="trip_seat" 
+                     data-is-available="${isAvailable}" 
+                     data-available-type="${availType}" 
+                     data-seat-number="${currentSeatNo}" 
+                     data-trip="${tripId}"
+                     style="cursor:${isAvailable ? 'pointer' : 'not-allowed'}; outline: none;">
+                    ${getSeatSvg(fill, stroke, currentSeatNo, textC)}
+                </div>`;
             }
-            $rowDiv.append(html);
+            $colDiv.append(html);
         }
-        $container.append($rowDiv);
-    }
+        $container.append($colDiv);
+    });
 
     bindSeatClicks();
 }
 
-// ==== İŞTE EKSİK OLAN SEPET VE ONAYLAMA MANTIKLARI ====
+// ==== SEPET VE ONAYLAMA MANTIKLARI ====
 
 const highlightSeat = (tripId, seatNumber) => {
     const $el = $(`.trip_seat[data-trip='${tripId}'][data-seat-number='${seatNumber}']`);
-    // Koltuğu SVG ile yeşile boyuyoruz
     $el.html(getSeatSvg("#02ff89", "#00c76a", seatNumber, "#005c31"));
 };
 
 const upsertTicket = (tripId, seatNumber, gender) => {
-    // Aynı koltuk zaten varsa sepetten çıkar (toggle mantığı gibi)
     ticketPairs = ticketPairs.filter(t => !(t.tripId === tripId && t.seatNumber === seatNumber));
     ticketPairs.push({ tripId, seatNumber, gender });
 };
@@ -151,7 +157,7 @@ const updateTripSeatSummary = (tripId) => {
 
     if (!$summary.length) return;
 
-    const placeholder = $summary.data("placeholder") || "Koltuk seçiniz.";
+    const placeholder = $summary.data("placeholder") || "Lütfen yolculuk etmek istediğiniz koltuğu seçiniz.";
     const selected = ticketPairs.filter(t => t.tripId === tripId);
 
     if (!selected.length) {
@@ -167,10 +173,10 @@ const updateTripSeatSummary = (tripId) => {
 
     if (Number.isFinite(price)) {
         const total = price * selected.length;
-        totalText = ` - Toplam: ${total.toFixed(2)}₺`;
+        totalText = ` - Toplam: ${total.toFixed(2)} ₺`;
     }
 
-    $summary.text(`Koltuklar: ${seatText}${totalText}`);
+    $summary.text(`Seçilen Koltuklar: ${seatText}${totalText}`);
 };
 
 function bindSeatClicks() {
@@ -178,43 +184,33 @@ function bindSeatClicks() {
         e.stopPropagation();
         const $seat = $(this);
 
-        // jQuery data() önbelleğine güvenmeyip direkt HTML attribute'tan saf string olarak okuyoruz
         const isAvailable = $seat.attr("data-is-available") === "true";
         if (!isAvailable) return;
 
         const currentSeat = $seat.attr("data-seat-number");
         const currentTrip = $seat.attr("data-trip");
 
-        // 1. İPTAL (DESELECT) KONTROLÜ: Koltuk zaten sepette var mı?
         const isAlreadySelected = ticketPairs.some(t => t.tripId === currentTrip && t.seatNumber === currentSeat);
-        
+
         if (isAlreadySelected) {
-            // Sepetten acımadan çıkar
             ticketPairs = ticketPairs.filter(t => !(t.tripId === currentTrip && t.seatNumber === currentSeat));
-            
-            // Rengini orijinal Boş (Beyaz) haline döndür
-            $seat.html(getSeatSvg("#FFFFFF", "#b4b4b4", currentSeat, "#000000")); 
-            
-            // Alt kısmı (Sepet özeti) güncelle
+            $seat.html(getSeatSvg("#FFFFFF", "#b4b4b4", currentSeat, "#000000"));
             updateTripSeatSummary(currentTrip);
-            
-            // Olası bir durumda açık kalan popup'ı gizle ve değişkenleri sıfırla
+
             $(".gender-pick").removeClass("show");
             selectedSeat = null;
             selectedTrip = null;
             return;
         }
 
-        // 2. YENİ SEÇİM: Seçili değilse global değişkenleri ata ve popup'ı aç
         selectedSeat = currentSeat;
         selectedTrip = currentTrip;
-        
+
         const availType = $seat.attr("data-available-type");
         const popup = document.querySelector(".gender-pick");
         const $mBtn = $(popup).find('.m');
         const $fBtn = $(popup).find('.f');
 
-        // Cinsiyet Koruması (Flex yapısını bozmadan gizle/göster)
         if (availType === 'AvailableM') {
             $mBtn.css('display', 'flex');
             $fBtn.hide();
@@ -226,7 +222,6 @@ function bindSeatClicks() {
             $fBtn.css('display', 'flex');
         }
 
-        // Popup'ı koltuğun tam üstüne konumlandır
         const rect = this.getBoundingClientRect();
         popup.style.left = rect.left + rect.width / 2 + "px";
         popup.style.top = rect.bottom + window.scrollY + "px";
@@ -235,33 +230,27 @@ function bindSeatClicks() {
     });
 }
 
-// Erkek Seçimi
+// Cinsiyet Seçimleri
 $(".gender-pick .m").off().on("click", () => {
     if (!selectedSeat || !selectedTrip) return;
-
     highlightSeat(selectedTrip, selectedSeat);
     upsertTicket(selectedTrip, selectedSeat, "m");
     updateTripSeatSummary(selectedTrip);
-
     selectedSeat = null;
     selectedTrip = null;
     $(".gender-pick").removeClass("show");
 });
 
-// Kadın Seçimi
 $(".gender-pick .f").off().on("click", () => {
     if (!selectedSeat || !selectedTrip) return;
-
     highlightSeat(selectedTrip, selectedSeat);
     upsertTicket(selectedTrip, selectedSeat, "f");
     updateTripSeatSummary(selectedTrip);
-
     selectedSeat = null;
     selectedTrip = null;
     $(".gender-pick").removeClass("show");
 });
 
-// Herhangi bir yere tıklayınca cinsiyet popup'ı kapansın
 $(document).on("click", function (e) {
     if (!$(e.target).closest('.gender-pick').length && !$(e.target).closest('.trip_seat').length) {
         $(".gender-pick").removeClass("show");
@@ -279,14 +268,14 @@ $(document).on("click", ".trip_confirm-button", async function (e) {
     const toStopId = Number($trip.data("to-stop-id"));
 
     if (!tripId || !fromStopId || !toStopId) {
-        alert("Sefer bilgileri eksik. Sayfayı yenileyip tekrar dene.");
+        alert("Sistemsel bir hata oluştu: Sefer güzergah bilgileri eksik. Lütfen sayfayı yenileyip tekrar deneyiniz.");
         return;
     }
 
     const selected = ticketPairs.filter(t => t.tripId === tripId);
 
     if (!selected.length) {
-        alert("Önce bi koltuk seç, boş otobüsü mü rezerve edeceksin?");
+        alert("Lütfen işleme devam etmek için en az bir koltuk seçiniz.");
         return;
     }
 
@@ -294,11 +283,10 @@ $(document).on("click", ".trip_confirm-button", async function (e) {
     const genders = selected.map(t => t.gender);
     const price = Number($trip.data("price")) || 0;
 
-    // Arayüzden seferin detaylarını çekiyoruz
     const fromStr = $trip.find('.trip-city:first-of-type span').text().trim();
     const toStr = $trip.find('.trip-city:last-of-type span').text().trim();
     const time = $trip.find('.trip-time span').text().trim();
-    const date = $("#date").val(); // Arama formundaki tarih inputu
+    const date = $("#date").val();
 
     const payload = {
         tripId,
@@ -307,18 +295,17 @@ $(document).on("click", ".trip_confirm-button", async function (e) {
         seatNumbers,
         genders,
         price,
-        fromStr, // Eklendi
-        toStr,   // Eklendi
-        time,    // Eklendi
-        date     // Eklendi
+        fromStr,
+        toStr,
+        time,
+        date
     };
 
     const $btn = $(this);
     const originalText = $btn.text();
-    $btn.prop("disabled", true).html('<span class="spinner-border spinner-border-sm"></span> Bekle...');
+    $btn.prop("disabled", true).html('<span class="spinner-border spinner-border-sm"></span> Yönlendiriliyor...');
 
     try {
-        // Backend'e prepareOrder isteğini atıyoruz
         const response = await fetch("/payment/create", {
             method: "POST",
             headers: {
@@ -330,16 +317,15 @@ $(document).on("click", ".trip_confirm-button", async function (e) {
         const data = await response.json();
 
         if (!response.ok || !data.paymentId) {
-            throw new Error(data.error || "Sepet oluşturulurken bir hata oluştu.");
+            throw new Error(data.error || "Rezervasyon oluşturulurken sunucu kaynaklı bir hata oluştu.");
         }
 
-        // Başarılıysa sepetteki koltukları temizle ve ödemeye geç
         ticketPairs = ticketPairs.filter(t => t.tripId !== tripId);
         window.location.href = `/payment/${data.paymentId}`;
 
     } catch (err) {
-        console.error("Payment create error:", err);
-        alert("Hata: " + err.message);
+        console.error("Ödeme oluşturma hatası:", err);
+        alert("İşlem başarısız: " + err.message);
         $btn.prop("disabled", false).text(originalText);
     }
 });

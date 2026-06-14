@@ -172,7 +172,7 @@ block content
                                 i.bi.bi-123
                             div
                                 .small.text-muted Seçilen Koltuklar
-                                .fw-bold.text-dark= seatNumbers.join(", ")
+                                .fw-bold.text-dark= Array.isArray(seatNumbers) ? seatNumbers.join(", ") : String(seatNumbers).replace(/[\[\]"']/g, '')
 
             // SAĞ: YOLCU + İLETİŞİM FORMU
             .col-lg-8.col-12
