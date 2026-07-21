@@ -1,4 +1,5 @@
 const goturApi = require("../utilities/goturApi");
+const { setPageSeo } = require("../utilities/pageSeo");
 
 const USER_COOKIE_OPTS = {
     httpOnly: true,
@@ -34,7 +35,37 @@ function setUserCookie(res, user, token) {
     res.cookie("user", JSON.stringify({ ...safeUser, token }), USER_COOKIE_OPTS);
 }
 
+function normalizeStopTitle(title) {
+    return String(title || "")
+        .toLocaleLowerCase("tr-TR")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, " ")
+        .trim();
+}
+
+function findStopId(cities, label) {
+    const needle = normalizeStopTitle(label);
+    if (!needle) return null;
+
+    const exact = cities.find((c) => normalizeStopTitle(c.title) === needle);
+    if (exact) return exact.placeId;
+
+    const partial = cities.find((c) => {
+        const hay = normalizeStopTitle(c.title);
+        return hay.includes(needle) || needle.includes(hay);
+    });
+    return partial?.placeId || null;
+}
+
 exports.getHomePage = async (req, res) => {
+    const tenant = req.app.locals.tenant;
+    setPageSeo(res, {
+        title: `${tenant.name} – Online Otobüs Bileti | Güvenli ve Hızlı`,
+        description: tenant.metaDescription,
+        canonical: tenant.siteUrl || undefined,
+    });
+
     try {
         const apiRes = await goturApi.getStops();
         const rawCities = apiRes?.stops || [];
@@ -56,8 +87,217 @@ exports.getHomePage = async (req, res) => {
     }
 };
 
+exports.getCorporatePage = (req, res) => {
+    const tenant = req.app.locals.tenant;
+    setPageSeo(res, {
+        title: `Kurumsal | ${tenant.name}`,
+        description: `${tenant.legalName} hakkında bilgi. ${tenant.corporate?.heroSubtitle || tenant.metaDescription}`,
+        canonical: tenant.siteUrl ? `${tenant.siteUrl}/corporate` : undefined,
+    });
+    return res.render("corporate");
+};
+
+exports.getBranchesPage = (req, res) => {
+    const tenant = req.app.locals.tenant;
+    setPageSeo(res, {
+        title: `Şubelerimiz & İletişim | ${tenant.name}`,
+        description: `${tenant.name} şube adresleri, telefon numaraları ve iletişim bilgileri.`,
+        canonical: tenant.siteUrl ? `${tenant.siteUrl}/branches` : undefined,
+    });
+    return res.render("branches", {
+        branches: tenant.branches || [],
+    });
+};
+
+exports.getRoutePage = async (req, res) => {
+    const tenant = req.app.locals.tenant;
+    const route = (tenant.popularCities || []).find((c) => c.slug === req.params.slug);
+
+    if (!route) {
+        setPageSeo(res, {
+            title: `Sayfa bulunamadı | ${tenant.name}`,
+            robots: "noindex, follow",
+            canonical: undefined,
+        });
+        return res.status(404).render("legal", {
+            legalTitle: "Sayfa bulunamadı",
+            legalParagraphs: ["Aradığınız rota sayfası mevcut değil."],
+        });
+    }
+
+    setPageSeo(res, {
+        title: `${route.from} - ${route.to} Otobüs Bileti | ${tenant.name}`,
+        description: route.metaDescription,
+        canonical: tenant.siteUrl ? `${tenant.siteUrl}/rota/${route.slug}` : undefined,
+        ogImage: tenant.siteUrl && route.image?.startsWith("/")
+            ? `${tenant.siteUrl}${route.image}`
+            : (route.image?.startsWith("http") ? route.image : tenant.logoAbsolute),
+    });
+
+    let cities = [];
+    let fromId = null;
+    let toId = null;
+
+    try {
+        const apiRes = await goturApi.getStops();
+        cities = (apiRes?.stops || []).map((c) => ({
+            placeId: c.placeId,
+            title: c.title,
+        })).sort((a, b) => a.title.localeCompare(b.title, "tr"));
+
+        fromId = findStopId(cities, route.from);
+        toId = findStopId(cities, route.to);
+    } catch (err) {
+        console.error("Rota sayfası durakları çekilirken hata:", err.message);
+    }
+
+    const routeJsonLd = JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Service",
+        name: `${route.from} - ${route.to} Otobüs Bileti`,
+        description: route.metaDescription,
+        provider: {
+            "@type": "TravelAgency",
+            name: tenant.name,
+            url: tenant.siteUrl || undefined,
+        },
+        areaServed: [route.from, route.to],
+        url: tenant.siteUrl ? `${tenant.siteUrl}/rota/${route.slug}` : undefined,
+    });
+
+    return res.render("route", {
+        route,
+        cities,
+        fromId,
+        toId,
+        routeJsonLd,
+    });
+};
+
+exports.getLegalPage = (req, res) => {
+    const tenant = req.app.locals.tenant;
+    const pages = {
+        gizlilik: {
+            title: `Gizlilik Politikası | ${tenant.name}`,
+            heading: "Gizlilik Politikası",
+            description: `${tenant.name} gizlilik politikası ve kişisel verilerin korunması hakkında bilgi.`,
+            path: "/gizlilik",
+            body: [
+                `${tenant.legalName || tenant.name} olarak web sitemizi ziyaret ettiğinizde paylaştığınız kişisel verilerin gizliliğine önem veriyoruz.`,
+                "Bilet işlemleri, üyelik ve müşteri hizmetleri süreçlerinde ad, soyad, iletişim ve kimlik bilgileriniz yalnızca hizmetin sunulması amacıyla işlenir.",
+                "Verileriniz üçüncü taraflarla pazarlama amacıyla paylaşılmaz. Yasal yükümlülükler ve ödeme altyapısı gereği zorunlu aktarımlar hariç tutulur.",
+                "Haklarınız için bizimle iletişim kanallarımız üzerinden iletişime geçebilirsiniz.",
+            ],
+        },
+        "kullanim-kosullari": {
+            title: `Kullanım Koşulları | ${tenant.name}`,
+            heading: "Kullanım Koşulları",
+            description: `${tenant.name} web sitesi kullanım koşulları ve online bilet işlem kuralları.`,
+            path: "/kullanim-kosullari",
+            body: [
+                `Bu web sitesini kullanarak ${tenant.name} online bilet hizmetlerinin kullanım koşullarını kabul etmiş sayılırsınız.`,
+                "Sefer bilgileri, fiyatlar ve koltuk müsaitliği anlık olarak değişebilir. Satın alma / rezervasyon tamamlanana kadar kesin işlem oluşmaz.",
+                "Yolcu bilgilerinin doğru girilmesi kullanıcının sorumluluğundadır. Hatalı bilgilerden doğan aksaklıklardan site sorumlu tutulamaz.",
+                "İptal ve iade koşulları ilgili sefer ve bilet kurallarına tabidir.",
+            ],
+        },
+        "cerez-politikasi": {
+            title: `Çerez Politikası | ${tenant.name}`,
+            heading: "Çerez Politikası",
+            description: `${tenant.name} çerez politikası: oturum, güvenlik ve site deneyimi çerezleri.`,
+            path: "/cerez-politikasi",
+            body: [
+                "Sitemiz, oturum yönetimi, güvenlik ve temel işlevsellik için zorunlu çerezler kullanır.",
+                "Giriş yaptığınızda üyelik oturumunuzun sürdürülmesi için çerezler saklanabilir.",
+                "Tarayıcı ayarlarınızdan çerezleri yönetebilirsiniz; bazı çerezleri kapatmak site işlevlerini etkileyebilir.",
+                "Analitik veya pazarlama çerezleri kullanılması halinde ayrıca bilgilendirme yapılır.",
+            ],
+        },
+    };
+
+    const page = pages[req.params.slug];
+    if (!page) {
+        return res.status(404).send("Sayfa bulunamadı.");
+    }
+
+    setPageSeo(res, {
+        title: page.title,
+        description: page.description,
+        canonical: tenant.siteUrl ? `${tenant.siteUrl}${page.path}` : undefined,
+    });
+
+    return res.render("legal", {
+        legalTitle: page.heading,
+        legalParagraphs: page.body,
+    });
+};
+
+exports.getRobotsTxt = (req, res) => {
+    const tenant = req.app.locals.tenant;
+    const sitemapUrl = tenant.siteUrl
+        ? `${tenant.siteUrl}/sitemap.xml`
+        : "/sitemap.xml";
+
+    const body = [
+        "User-agent: *",
+        "Allow: /",
+        "Disallow: /payment",
+        "Disallow: /profile",
+        "Disallow: /my-tickets",
+        "Disallow: /api/",
+        "Disallow: /login",
+        "Disallow: /logout",
+        "Disallow: /register",
+        "",
+        `Sitemap: ${sitemapUrl}`,
+        "",
+    ].join("\n");
+
+    res.type("text/plain").send(body);
+};
+
+exports.getSitemap = (req, res) => {
+    const tenant = req.app.locals.tenant;
+    const base = tenant.siteUrl || "";
+    const today = new Date().toISOString().slice(0, 10);
+
+    const urls = [
+        { loc: "/", priority: "1.0", changefreq: "daily" },
+        { loc: "/corporate", priority: "0.7", changefreq: "monthly" },
+        { loc: "/branches", priority: "0.7", changefreq: "monthly" },
+        { loc: "/gizlilik", priority: "0.3", changefreq: "yearly" },
+        { loc: "/kullanim-kosullari", priority: "0.3", changefreq: "yearly" },
+        { loc: "/cerez-politikasi", priority: "0.3", changefreq: "yearly" },
+        ...(tenant.popularCities || []).map((route) => ({
+            loc: `/rota/${route.slug}`,
+            priority: "0.9",
+            changefreq: "weekly",
+        })),
+    ];
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.map((u) => `  <url>
+    <loc>${base}${u.loc === "/" ? "" : u.loc}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${u.changefreq}</changefreq>
+    <priority>${u.priority}</priority>
+  </url>`).join("\n")}
+</urlset>`;
+
+    res.type("application/xml").send(xml);
+};
+
 exports.getTrips = async (req, res) => {
     const { from, to, date } = req.query;
+    const tenant = req.app.locals.tenant;
+
+    setPageSeo(res, {
+        title: `Sefer Sonuçları | ${tenant.name}`,
+        description: `${tenant.name} sefer arama sonuçları.`,
+        robots: "noindex, follow",
+        canonical: undefined,
+    });
 
     if (!from || !to || !date) {
         return res.status(400).send("Nereden, nereye ve tarih bilgileri zorunludur.");
@@ -135,6 +375,14 @@ exports.createPayment = async (req, res) => {
 };
 
 exports.getPaymentPage = async (req, res) => {
+    const tenant = req.app.locals.tenant;
+    setPageSeo(res, {
+        title: `Ödeme | ${tenant.name}`,
+        description: "Ödeme sayfası",
+        robots: "noindex, nofollow",
+        canonical: undefined,
+    });
+
     try {
         const paymentId = req.params.id;
         const apiRes = await goturApi.getPaymentDetail(paymentId);
@@ -201,12 +449,6 @@ exports.paymentComplete = async (req, res) => {
     }
 };
 
-exports.getBranchesPage = (req, res) => {
-    return res.render("branches", {
-        branches: req.app.locals.tenant.branches || [],
-    });
-};
-
 exports.login = async (req, res) => {
     try {
         const { idNumber, password } = req.body;
@@ -264,6 +506,14 @@ exports.getProfilePage = async (req, res) => {
     const session = getAuthSession(req);
     if (!session) return res.redirect("/");
 
+    const tenant = req.app.locals.tenant;
+    setPageSeo(res, {
+        title: `Hesabım | ${tenant.name}`,
+        description: "Üye profili",
+        robots: "noindex, nofollow",
+        canonical: undefined,
+    });
+
     try {
         const apiRes = await goturApi.getProfile(session.id, session.token);
         if (!apiRes.success || !apiRes.user) {
@@ -306,6 +556,14 @@ exports.updateProfile = async (req, res) => {
 exports.getMyTicketsPage = async (req, res) => {
     const session = getAuthSession(req);
     if (!session) return res.redirect("/");
+
+    const tenant = req.app.locals.tenant;
+    setPageSeo(res, {
+        title: `Biletlerim | ${tenant.name}`,
+        description: "Biletlerim",
+        robots: "noindex, nofollow",
+        canonical: undefined,
+    });
 
     try {
         const apiRes = await goturApi.getCustomerTickets(session.id, session.token);

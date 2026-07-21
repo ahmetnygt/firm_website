@@ -24,10 +24,10 @@
     "items": []
   },
   "popularCities": [
-    { "title": "ÇANAKKALE-BEYLİKDÜZÜ", "image": "route-1.png", "href": "#" },
-    { "title": "ÇANAKKALE-KADIKÖY", "image": "route-2.png", "href": "#" },
-    { "title": "BEYLİKDÜZÜ-GELİBOLU", "image": "route-4.webp", "href": "#" },
-    { "title": "KADIKÖY-GELİBOLU", "image": "route-3.webp", "href": "#" }
+    { "title": "ÇANAKKALE-BEYLİKDÜZÜ", "from": "Çanakkale", "to": "Beylikdüzü", "slug": "canakkale-beylikduzu", "image": "route-1.png" },
+    { "title": "ÇANAKKALE-KADIKÖY", "from": "Çanakkale", "to": "Kadıköy", "slug": "canakkale-kadikoy", "image": "route-2.png" },
+    { "title": "BEYLİKDÜZÜ-GELİBOLU", "from": "Beylikdüzü", "to": "Gelibolu", "slug": "beylikduzu-gelibolu", "image": "route-4.webp" },
+    { "title": "KADIKÖY-GELİBOLU", "from": "Kadıköy", "to": "Gelibolu", "slug": "kadikoy-gelibolu", "image": "route-3.webp" }
   ],
   "faq": [
     {

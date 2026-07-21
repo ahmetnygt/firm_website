@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { slugify, parseRouteTitle } = require('./pageSeo');
 
 const CONFIG_PATH = path.join(__dirname, '..', 'config', 'site.json');
 
@@ -64,11 +65,47 @@ function loadSiteConfig() {
     const logo = imagePath(filled.logo, 'logo.png');
     const siteUrl = (process.env.SITE_URL || '').replace(/\/$/, '');
 
-    const popularCities = (filled.popularCities || []).map((city) => ({
-        ...city,
-        image: imagePath(city.image, 'route-2.png'),
-        href: city.href || '#',
-    }));
+    const popularCities = (filled.popularCities || []).map((city) => {
+        const parsed = parseRouteTitle(city.title);
+        const from = city.from || parsed.from;
+        const to = city.to || parsed.to;
+        const slug = city.slug || slugify(`${from}-${to}` || city.title);
+        const href = (!city.href || city.href === '#')
+            ? `/rota/${slug}`
+            : city.href;
+
+        return {
+            ...city,
+            from,
+            to,
+            slug,
+            href,
+            image: imagePath(city.image, 'route-2.png'),
+            metaDescription: city.metaDescription
+                || `${from} - ${to} otobüs bileti: ${name} ile online, güvenli ve konforlu seyahat. Güncel sefer saatleri ve fiyatlar.`,
+        };
+    });
+
+    const orgSchema = {
+        '@context': 'https://schema.org',
+        '@type': ['Organization', 'TravelAgency'],
+        name,
+        legalName: filled.legalName || name,
+        url: siteUrl || undefined,
+        logo: siteUrl ? `${siteUrl}${logo}` : logo,
+        telephone: phone || undefined,
+        areaServed: 'TR',
+        priceRange: '$$',
+    };
+
+    const primaryBranch = branches.find((b) => b.address) || branches[0];
+    if (primaryBranch?.address) {
+        orgSchema.address = {
+            '@type': 'PostalAddress',
+            streetAddress: primaryBranch.address,
+            addressCountry: 'TR',
+        };
+    }
 
     return {
         name,
@@ -99,6 +136,7 @@ function loadSiteConfig() {
                 acceptedAnswer: { '@type': 'Answer', text: item.a },
             })),
         }),
+        orgJsonLd: JSON.stringify(orgSchema),
         trustBadges: filled.trustBadges || [],
         corporate: filled.corporate || {
             heroSubtitle: '',

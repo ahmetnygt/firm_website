@@ -3,9 +3,33 @@ html(lang="tr")
     head
         meta(charset="utf-8")
         meta(name="viewport" content="width=device-width, initial-scale=1")
-        title= tenant.name + " – Güvenli ve Hızlı Otobüs Bileti"
-        meta(name="description" content=tenant.metaDescription)
-        
+        title= pageSeo.title
+        meta(name="description" content=pageSeo.description)
+        if pageSeo.robots
+            meta(name="robots" content=pageSeo.robots)
+        if pageSeo.canonical
+            link(rel="canonical" href=pageSeo.canonical)
+
+        meta(property="og:locale" content="tr_TR")
+        meta(property="og:type" content=pageSeo.ogType || "website")
+        meta(property="og:title" content=pageSeo.title)
+        meta(property="og:description" content=pageSeo.description)
+        if pageSeo.canonical
+            meta(property="og:url" content=pageSeo.canonical)
+        if tenant.siteUrl
+            meta(property="og:site_name" content=tenant.name)
+        if pageSeo.ogImage
+            meta(property="og:image" content=pageSeo.ogImage)
+
+        meta(name="twitter:card" content="summary_large_image")
+        meta(name="twitter:title" content=pageSeo.title)
+        meta(name="twitter:description" content=pageSeo.description)
+        if pageSeo.ogImage
+            meta(name="twitter:image" content=pageSeo.ogImage)
+
+        link(rel="icon" href=tenant.logo type="image/png")
+        link(rel="apple-touch-icon" href=tenant.logo)
+
         //- Kütüphaneler
         link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css")
         link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css")
@@ -42,15 +66,7 @@ html(lang="tr")
 
         block css
 
-        script(type="application/ld+json").
-            {
-                "@context": "https://schema.org",
-                "@type": "Organization",
-                "name": "!{tenant.name}",
-                "url": "!{tenant.siteUrl}",
-                "logo": "!{tenant.logoAbsolute}",
-                "telephone": "!{tenant.phone}"
-            }
+        script(type="application/ld+json")!= tenant.orgJsonLd
     
     body.bg-light
         // 1) TOP BAR
@@ -68,7 +84,7 @@ html(lang="tr")
         nav.navbar.navbar-expand-lg.navbar-light.bg-white.shadow-sm.sticky-top
             .container
                 a.navbar-brand.py-1(href="/")
-                    img(src=tenant.logo height="65" alt=tenant.name loading="lazy" style="object-fit: contain;")
+                    img(src=tenant.logo height="65" alt=tenant.name fetchpriority="high" style="object-fit: contain;")
                 
                 button.navbar-toggler.border-0.shadow-none(type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Menü")
                     span.navbar-toggler-icon
@@ -131,9 +147,9 @@ html(lang="tr")
                                     | Ara
                         
                         .small
-                            a.text-white-50.text-decoration-none.me-3.custom-link-hover(href="#") Gizlilik
-                            a.text-white-50.text-decoration-none.me-3.custom-link-hover(href="#") Kullanım Koşulları
-                            a.text-white-50.text-decoration-none.custom-link-hover(href="#") Çerez Politikası
+                            a.text-white-50.text-decoration-none.me-3.custom-link-hover(href="/gizlilik") Gizlilik
+                            a.text-white-50.text-decoration-none.me-3.custom-link-hover(href="/kullanim-kosullari") Kullanım Koşulları
+                            a.text-white-50.text-decoration-none.custom-link-hover(href="/cerez-politikasi") Çerez Politikası
 
         // --- MODALLAR ---
 

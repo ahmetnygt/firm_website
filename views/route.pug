@@ -1,0 +1,94 @@
+extends layout
+
+block css
+    style.
+        .route-hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.55)), url("#{route.image}") center/cover no-repeat;
+            padding: 90px 0 70px;
+            color: white;
+            border-radius: 0 0 2rem 2rem;
+        }
+        .route-search-card {
+            background: #fff;
+            border-radius: 1rem;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+        .section-title {
+            font-weight: 800;
+            color: #2c3e50;
+            position: relative;
+            padding-bottom: 0.5rem;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background-color: var(--accent-color);
+            border-radius: 2px;
+        }
+
+block content
+    section.route-hero
+        .container
+            .row.align-items-center.g-4
+                .col-lg-6
+                    p.small.text-white-50.mb-2.text-uppercase.fw-semibold Online Otobüs Bileti
+                    h1.display-5.fw-bold.mb-3= `${route.from} - ${route.to} Otobüs Bileti`
+                    p.lead.mb-0.text-white-50
+                        | #{tenant.name} ile #{route.from} kalkışlı #{route.to} seferlerinde güvenli ve konforlu yolculuk.
+                .col-lg-5.ms-lg-auto
+                    .route-search-card.p-4.text-dark
+                        h2.h5.fw-bold.mb-3 Sefer Ara
+                        form#searchForm(action="/trips" method="get")
+                            .mb-3
+                                label.form-label.fw-bold Kalkış
+                                .searchable-select
+                                    select.form-select.form-select-lg#from(name="from" required data-placeholder="Nereden")
+                                        option(disabled selected=!fromId value="") Nereden
+                                        each c in cities
+                                            option(value=c.placeId selected=(fromId === c.placeId))= c.title
+                            .mb-3
+                                label.form-label.fw-bold Varış
+                                .searchable-select
+                                    select.form-select.form-select-lg#to(name="to" required data-placeholder="Nereye")
+                                        option(disabled selected=!toId value="") Nereye
+                                        each c in cities
+                                            option(value=c.placeId selected=(toId === c.placeId))= c.title
+                            .mb-4
+                                label.form-label.fw-bold Tarih
+                                input.form-control.form-control-lg#date(type="text" name="date" required placeholder="Tarih Seçin")
+                            button.btn.btn-primary.btn-lg.w-100.fw-bold(type="submit") Seferleri Göster
+
+    section.py-5.bg-white
+        .container.py-3
+            .row.justify-content-center
+                .col-lg-8.text-center
+                    h2.section-title.mb-4= `${route.from} - ${route.to}`
+                    p.text-muted.lh-lg
+                        | #{route.from} – #{route.to} hattında #{tenant.name} seferleriyle online otobüs bileti alabilirsiniz.
+                        | Güncel saat ve fiyatlar için yukarıdaki aramayı kullanın; size uygun koltuğu hemen rezerve edin.
+
+            if tenant.trustBadges && tenant.trustBadges.length
+                .row.g-4.mt-4
+                    each badge in tenant.trustBadges
+                        .col-md-4.text-center
+                            i.bi.fs-2.text-primary.mb-2(class=badge.icon)
+                            h3.h6.fw-bold= badge.title
+                            p.small.text-muted.mb-0= badge.text
+
+            if tenant.popularCities && tenant.popularCities.length > 1
+                .mt-5.pt-3
+                    h2.section-title.d-block.text-center.mb-4 Diğer Popüler Hatlar
+                    .d-flex.flex-wrap.justify-content-center.gap-2
+                        each city in tenant.popularCities
+                            if city.slug !== route.slug
+                                a.btn.btn-outline-primary.rounded-pill(href=city.href)= city.title
+
+block js
+    script(type="application/ld+json")!= routeJsonLd

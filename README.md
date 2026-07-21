@@ -40,6 +40,13 @@ Site: `http://localhost:5000`
 
 Metinlerde `{{name}}` kullanırsanız, yükleme sırasında firma adıyla değiştirilir.
 
+## SEO
+
+- Sayfa bazlı `title` / `description` / canonical / Open Graph
+- `/robots.txt` ve `/sitemap.xml` (SITE_URL gerekir)
+- Popüler hatlar: `popularCities` → otomatik `/rota/:slug` landing sayfaları
+- Ödeme, profil, biletlerim: `noindex`
+
 ## API bağımlılığı
 
 Bilet arama, koltuk, ödeme, üyelik ve biletlerim goturyzhn `/api` üzerinden çalışır. Site tek başına sefer verisi tutmaz; doğru tenant key/api key olmadan arama boş döner.

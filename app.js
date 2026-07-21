@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const indexRoute = require('./routes/index.js');
 const { loadSiteConfig } = require('./utilities/loadSiteConfig');
+const { buildDefaultSeo } = require('./utilities/pageSeo');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -19,6 +20,8 @@ app.use(express.json());
 app.locals.tenant = loadSiteConfig();
 
 app.use((req, res, next) => {
+    res.locals.pageSeo = buildDefaultSeo(req.app.locals.tenant, req.path);
+
     if (req.cookies && req.cookies.user) {
         try {
             res.locals.user = JSON.parse(req.cookies.user);

@@ -1,0 +1,13 @@
+extends layout
+
+block content
+    .container.py-5
+        .row.justify-content-center
+            .col-lg-8
+                h1.h2.fw-bold.mb-4= legalTitle
+                if legalParagraphs && legalParagraphs.length
+                    each p in legalParagraphs
+                        p.text-muted.lh-lg= p
+                else if legalBody
+                    p.text-muted.lh-lg= legalBody
+                a.btn.btn-outline-primary.rounded-pill.mt-3(href="/") Anasayfaya Dön

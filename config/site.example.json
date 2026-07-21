@@ -31,8 +31,8 @@
     ]
   },
   "popularCities": [
-    { "title": "ROTA-1", "image": "route-2.png", "href": "#" },
-    { "title": "ROTA-2", "image": "route-3.png", "href": "#" }
+    { "title": "KALKIŞ-VARIŞ", "from": "Kalkış", "to": "Varış", "slug": "kalkis-varis", "image": "route-2.png" },
+    { "title": "ROTA-2", "from": "Şehir A", "to": "Şehir B", "slug": "sehir-a-sehir-b", "image": "route-3.png" }
   ],
   "faq": [
     {
