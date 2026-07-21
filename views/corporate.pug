@@ -1,0 +1,141 @@
+extends layout
+
+block css
+    style.
+        .corporate-hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url("#{tenant.heroImage}") center/cover no-repeat;
+            padding: 100px 0;
+            color: white;
+            text-align: center;
+            border-radius: 0 0 2rem 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            font-weight: 800;
+            color: #2c3e50;
+            position: relative;
+            padding-bottom: 0.5rem;
+            display: inline-block;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background-color: var(--accent-color);
+            border-radius: 2px;
+        }
+        
+        .corporate-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #4a5568;
+        }
+        
+        .feature-icon-box {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(217, 78, 30, 0.08);
+            color: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 1.25rem auto;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card {
+            border: 1px solid #eaeaea;
+            border-radius: 1rem;
+            background: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+            border-color: #d0d0d0;
+        }
+
+        .feature-card:hover .feature-icon-box {
+            background-color: var(--accent-color);
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .corporate-image-wrapper {
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            margin-bottom: 3rem;
+            border: 1px solid #eaeaea;
+        }
+
+        .accordion-button:not(.collapsed) {
+            color: var(--accent-color);
+            background-color: rgba(217, 78, 30, 0.05);
+            box-shadow: inset 0 -1px 0 rgba(0,0,0,.125);
+        }
+        .accordion-button:focus {
+            box-shadow: none;
+            border-color: rgba(0,0,0,.125);
+        }
+
+block content
+    .corporate-hero
+        .container
+            h1.display-4.fw-bold.text-shadow KURUMSAL
+            p.lead.fw-light= tenant.corporate.heroSubtitle
+
+    .container.py-5
+        .row.justify-content-center
+            .col-lg-10
+                .text-center
+                    h2.section-title= tenant.legalName
+                    
+                .corporate-image-wrapper
+                    img.img-fluid.w-100(src=tenant.corporateImage alt=`${tenant.name} Kurumsal Otobüs Filosu` style="height: 450px; object-fit: cover;")
+                    
+                .corporate-content.text-center.mb-5.px-md-4
+                    p.mb-4= tenant.corporate.intro
+
+                if tenant.corporate.features && tenant.corporate.features.length
+                    .row.g-4.text-center.my-5
+                        each feat in tenant.corporate.features
+                            .col-md-4
+                                .feature-card.h-100.p-4
+                                    .feature-icon-box
+                                        i.bi(class=feat.icon)
+                                    h3.h5.fw-bold.text-dark= feat.title
+                                    p.text-muted.small.mt-3.mb-0= feat.text
+
+                if tenant.corporate.closing
+                    .corporate-content.text-center.bg-white.p-4.p-md-5.rounded-4.shadow-sm.border.mt-5.mb-5
+                        p.mb-0= tenant.corporate.closing
+
+                if tenant.faq && tenant.faq.length
+                    .text-center.mt-5.pt-4
+                        h2.section-title SIKÇA SORULAN SORULAR
+                        p.text-muted.mb-4 Yolcularımızın en çok merak ettiği konular ve seyahat kurallarımız.
+                    
+                    .accordion.accordion-flush.shadow-sm.rounded-4.border.overflow-hidden.bg-white#seoFaq
+                        each item, index in tenant.faq
+                            .accordion-item.border-bottom
+                                h3.accordion-header
+                                    button.accordion-button.collapsed.fw-bold.text-dark(type="button" data-bs-toggle="collapse" data-bs-target=`#faq${index}` aria-expanded="false")= item.q
+                                div(id=`faq${index}` class="accordion-collapse collapse" data-bs-parent="#seoFaq")
+                                    .accordion-body.text-muted.lh-lg= item.a
+
+block js
+    if tenant.faq && tenant.faq.length
+        script(type="application/ld+json")!= tenant.faqJsonLd

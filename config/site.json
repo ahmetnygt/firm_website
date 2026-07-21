@@ -1,0 +1,97 @@
+{
+  "name": "Çanakkale Yılmaz Turizm",
+  "legalName": "Çanakkale Yılmaz Turizm Seyahat Acenteciliği Tic. Ltd. Şti.",
+  "primaryColor": "#e31e24",
+  "accentColor": "#f4f4f5",
+  "logo": "logo.png",
+  "heroImage": "hero-bg.webp",
+  "corporateImage": "corporate_img.webp",
+  "phone": "505 052 3434",
+  "metaDescription": "{{name}} ile Çanakkale, Gelibolu, Tekirdağ, Beylikdüzü ve Kadıköy hatlarında online, güvenli otobüs bileti al.",
+  "hero": {
+    "title": "Çanakkale'den Güvenli Yolculuk",
+    "subtitle": "Gelibolu, Tekirdağ, Beylikdüzü ve Kadıköy seferleriyle konforlu ulaşım."
+  },
+  "features": [
+    { "icon": "bi-car-front-fill", "title": "KONFORLU SEYAHAT" },
+    { "icon": "bi-emoji-smile-fill", "title": "GÜLER YÜZLÜ EKİP" },
+    { "icon": "bi-clock-fill", "title": "ZAMANINDA VARIŞ" },
+    { "icon": "bi-fan", "title": "KLİMALI ARAÇLAR" }
+  ],
+  "campaigns": {
+    "title": "KAMPANYALARIMIZ",
+    "subtitle": "İndirimli bilet fırsatları yakında burada.",
+    "items": []
+  },
+  "popularCities": [
+    { "title": "ÇANAKKALE-BEYLİKDÜZÜ", "image": "route-1.png", "href": "#" },
+    { "title": "ÇANAKKALE-KADIKÖY", "image": "route-2.png", "href": "#" },
+    { "title": "BEYLİKDÜZÜ-GELİBOLU", "image": "route-4.webp", "href": "#" },
+    { "title": "KADIKÖY-GELİBOLU", "image": "route-3.webp", "href": "#" }
+  ],
+  "faq": [
+    {
+      "q": "İnternetten ucuz otobüs bileti nasıl alınır?",
+      "a": "Web sitemiz üzerinden kalkış ve varış noktalarınızı seçerek güncel sefer saatlerini sorgulayabilir, size en uygun ve ucuz otobüs biletini 3D Secure güvenli ödeme altyapısıyla saniyeler içinde satın alabilirsiniz."
+    },
+    {
+      "q": "Bilet iptal ve iade koşulları nelerdir?",
+      "a": "Satın aldığınız online otobüs biletlerini, sefer saatine 24 saat kalana kadar web sitemizdeki 'Biletlerim' menüsünden kesintisiz olarak iptal edebilir ve kredi kartınıza tam iade alabilirsiniz."
+    },
+    {
+      "q": "Hangi güzergahlarda seferleriniz var?",
+      "a": "Çanakkale merkezli hatlarımızda Gelibolu, Tekirdağ, Beylikdüzü ve Kadıköy yönlerinde düzenli seferler düzenliyoruz. Güncel saat ve fiyatlar için anasayfadaki sefer aramasını kullanabilirsiniz."
+    },
+    {
+      "q": "Otobüs bagaj hakkım kaç kilogramdır?",
+      "a": "Konforlu seyahatiniz için her yolcumuzun bagaj bölümünde 30 kg'a kadar ücretsiz yük taşıma hakkı bulunmaktadır. Değerli eşyalarınızı içeren el bagajlarınızı ise araç içine alabilirsiniz."
+    }
+  ],
+  "trustBadges": [
+    {
+      "icon": "bi-shield-check",
+      "title": "GÜVENLİ ÖDEME",
+      "text": "Tüm ödemeleriniz SSL ile güvence altına alınmıştır."
+    },
+    {
+      "icon": "bi-people-fill",
+      "title": "TECRÜBELİ EKİP",
+      "text": "Alanında tecrübeli şoförlerimizle güvenle seyahat edin."
+    },
+    {
+      "icon": "bi-bus-front-fill",
+      "title": "KONFORLU SEYAHAT",
+      "text": "Tüm seferlerimiz sizin rahat etmeniz için özel planlanır."
+    }
+  ],
+  "corporate": {
+    "heroSubtitle": "Çanakkale merkezli güvenilir yolculuk deneyimi",
+    "intro": "{{name}} olarak Çanakkale'den Gelibolu, Tekirdağ, Beylikdüzü ve Kadıköy hatlarında güvenli, konforlu ve düzenli otobüs seferleri sunuyoruz. Yolcularımıza sadece bir ulaşım değil, ayrıcalıklı bir yolculuk deneyimi yaşatmayı hedefliyoruz.",
+    "closing": "Online otobüs bileti alma sürecini saniyelere indiriyoruz. Web sitemiz üzerinden 7/24 güzergahları inceleyebilir, sefer saatlerini sorgulayabilir ve size en uygun koltuğu rezerve edebilirsiniz. {{name}}, Çanakkale yollarının güvenilir yol arkadaşıdır.",
+    "features": [
+      {
+        "icon": "bi-people-fill",
+        "title": "DENEYİMLİ EKİP",
+        "text": "Alanında uzman kadromuz ve güler yüzlü personelimizle, bilet alımından varış noktasına kadar kusursuz bir hizmet sunuyoruz."
+      },
+      {
+        "icon": "bi-bus-front-fill",
+        "title": "KONFORLU FİLO",
+        "text": "Modern ve bakımlı araç filomuz ile Çanakkale hattındaki yolculuklarınızı konforlu hale getiriyoruz."
+      },
+      {
+        "icon": "bi-shield-check",
+        "title": "GÜVENLİ ONLINE BİLET",
+        "text": "Gelişmiş altyapımız sayesinde ucuz ve güvenli otobüs bileti bulmak artık çok kolay. Tüm işlemleriniz güvence altındadır."
+      }
+    ]
+  },
+  "branches": [
+    {
+      "name": "Merkez Şube",
+      "address": "",
+      "phone": "505 052 3434",
+      "mapUrl": "https://maps.google.com/?q=Beylikdüzü+İstanbul"
+    }
+  ]
+}

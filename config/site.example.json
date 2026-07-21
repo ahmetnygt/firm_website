@@ -1,0 +1,94 @@
+{
+  "name": "Firma Adı Seyahat",
+  "legalName": "Firma Adı Seyahat ve Turizm Tic. Ltd. Şti.",
+  "primaryColor": "#0088CC",
+  "accentColor": "#D94E1E",
+  "logo": "logo.png",
+  "heroImage": "hero-bg.webp",
+  "corporateImage": "corporate_img.webp",
+  "phone": "0850 000 00 00",
+  "metaDescription": "{{name}} ile Türkiye'nin her yerine online, ucuz ve güvenli otobüs bileti al.",
+  "hero": {
+    "title": "Dakik ve Güvenli Yolculuk",
+    "subtitle": "Firma sloganınızı buraya yazın."
+  },
+  "features": [
+    { "icon": "bi-car-front-fill", "title": "KONFORLU SEYAHAT" },
+    { "icon": "bi-emoji-smile-fill", "title": "GÜLER YÜZLÜ EKİP" },
+    { "icon": "bi-clock-fill", "title": "ZAMANINDA VARIŞ" },
+    { "icon": "bi-fan", "title": "KLİMALI ARAÇLAR" }
+  ],
+  "campaigns": {
+    "title": "KAMPANYALARIMIZ",
+    "subtitle": "İndirimli bilet fiyatlarıyla konforlu seyahat fırsatlarını kaçırmayın.",
+    "items": [
+      {
+        "route": "KALKIŞ > VARIŞ",
+        "oldPrice": 750,
+        "newPrice": 500,
+        "features": ["Konforlu Seyahat", "Güler Yüzlü Ekip", "Zamanında Varış", "Klimalı Araç"]
+      }
+    ]
+  },
+  "popularCities": [
+    { "title": "ROTA-1", "image": "route-2.png", "href": "#" },
+    { "title": "ROTA-2", "image": "route-3.png", "href": "#" }
+  ],
+  "faq": [
+    {
+      "q": "İnternetten ucuz otobüs bileti nasıl alınır?",
+      "a": "Web sitemiz üzerinden kalkış ve varış noktalarınızı seçerek güncel sefer saatlerini sorgulayabilir, size en uygun biletini güvenli ödeme ile satın alabilirsiniz."
+    },
+    {
+      "q": "Bilet iptal ve iade koşulları nelerdir?",
+      "a": "Satın aldığınız online otobüs biletlerini, sefer saatine 24 saat kalana kadar 'Biletlerim' menüsünden iptal edebilirsiniz."
+    }
+  ],
+  "trustBadges": [
+    {
+      "icon": "bi-shield-check",
+      "title": "GÜVENLİ ÖDEME",
+      "text": "Tüm ödemeleriniz SSL ile güvence altına alınmıştır."
+    },
+    {
+      "icon": "bi-people-fill",
+      "title": "TECRÜBELİ EKİP",
+      "text": "Alanında tecrübeli şoförlerimizle güvenle seyahat edin."
+    },
+    {
+      "icon": "bi-bus-front-fill",
+      "title": "KONFORLU SEYAHAT",
+      "text": "Tüm seferlerimiz sizin rahat etmeniz için özel planlanır."
+    }
+  ],
+  "corporate": {
+    "heroSubtitle": "Firma hakkında kısa tanıtım cümlesi",
+    "intro": "{{name}} olarak güvenli ve konforlu otobüs seferleri düzenliyoruz. Bu paragrafı firmanıza göre güncelleyin.",
+    "closing": "Online bilet alma sürecini kolaylaştırıyoruz. {{name}} ile yollardaki en güvenilir yol arkadaşınız olun.",
+    "features": [
+      {
+        "icon": "bi-people-fill",
+        "title": "DENEYİMLİ EKİP",
+        "text": "Uzman kadromuzla kusursuz hizmet sunuyoruz."
+      },
+      {
+        "icon": "bi-bus-front-fill",
+        "title": "KONFORLU FİLO",
+        "text": "Modern otobüs filomuz ile konforlu yolculuk."
+      },
+      {
+        "icon": "bi-shield-check",
+        "title": "GÜVENLİ ONLINE BİLET",
+        "text": "Tüm işlemleriniz güvence altındadır."
+      }
+    ]
+  },
+  "branches": [
+    {
+      "name": "Merkez Ofis",
+      "address": "Adres satırı",
+      "phone": "",
+      "mapUrl": "https://maps.google.com/?q=Istanbul"
+    }
+  ]
+}

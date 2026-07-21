@@ -1,0 +1,202 @@
+extends layout
+
+block css
+    style.
+        .hero-search-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-weight: 800;
+            color: #2c3e50;
+            position: relative;
+            padding-bottom: 0.5rem;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background-color: var(--accent-color);
+            border-radius: 2px;
+        }
+
+        .attr-icon {
+            color: var(--accent-color);
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+            display: inline-block;
+        }
+
+        .price-card {
+            border-radius: 0.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #eaeaea;
+            background: #fff;
+        }
+        .price-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+            border-color: var(--accent-color);
+        }
+        .old-price { text-decoration: line-through; color: #a0a0a0; font-size: 1.1rem; }
+        .new-price { color: var(--accent-color); font-size: 2.5rem; font-weight: 800; }
+        .feature-list i { color: #27ae60; margin-right: 0.5rem; }
+
+        .swap-btn { transition: transform 0.3s ease; }
+        .swap-btn:active { transform: rotate(180deg) scale(0.9); }
+
+block content
+    // 1) HERO
+    section.hero.position-relative(style="min-height: 80vh; display: flex; align-items: center;")
+        .hero-bg.position-absolute.w-100.h-100.top-0.start-0(style="z-index: -2;")
+            picture
+                source(media="(min-width:992px)" srcset=tenant.heroImage type="image/webp")
+                source(media="(min-width:768px)" srcset=tenant.heroImage type="image/webp")
+                img.img-fluid.w-100.h-100.object-fit-cover(src=tenant.heroImage alt=`${tenant.name} Otobüs Yolculuğu` loading="eager" fetchpriority="high")
+        
+        .hero-overlay.position-absolute.w-100.h-100.top-0.start-0(style="background: linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0) 100%); z-index: -1;")
+        
+        .container.position-relative.py-5
+            .text-white.mb-4
+                h1.display-5.fw-bold.mb-2.text-shadow= tenant.hero.title
+                p.lead.fw-normal.text-light= tenant.hero.subtitle
+            .row
+                .col-xl-5.col-lg-6.col-md-8.mt-5.mt-lg-0
+                    .hero-search-card.p-4
+                        form#searchForm
+                            .mb-3
+                                label.form-label.fw-bold.text-dark Kalkış - Varış Noktası
+                                .d-flex.align-items-center.gap-2
+                                    .flex-grow-1.searchable-select(style="width: 40%;")
+                                        select.form-select.form-select-lg#from(required data-placeholder="Nereden")
+                                            option(disabled selected value="") Nereden
+                                            each c in cities
+                                                option(value=c.placeId)= c.title
+                                    
+                                    button.btn.btn-outline-primary.rounded-circle.swap-btn.flex-shrink-0#swapCities(type="button" style="width: 42px; height: 42px; padding: 0;" aria-label="Yönleri Değiştir")
+                                        i.bi.bi-arrow-left-right
+                                    
+                                    .flex-grow-1.searchable-select(style="width: 40%;")
+                                        select.form-select.form-select-lg#to(required data-placeholder="Nereye")
+                                            option(disabled selected value="") Nereye
+                                            each c in cities
+                                                option(value=c.placeId)= c.title
+                            
+                            .mb-4
+                                label.form-label.fw-bold.text-dark Yolculuk Tarihi
+                                .input-group.input-group-lg
+                                    input.form-control.bg-white#date(type="text" required placeholder="Tarih Seçin")
+                                    span.input-group-text.bg-white
+                                        i.bi.bi-calendar3.text-primary
+                            
+                            .d-flex.gap-2
+                                button.btn.btn-outline-secondary.today.fw-medium.flex-fill(type="button") Bugün
+                                button.btn.btn-outline-secondary.tomorrow.fw-medium.flex-fill(type="button") Yarın
+                                button.btn.btn-primary.btn-lg.fw-bold.flex-fill(type="submit" style="flex: 2;")
+                                    | Sefer Ara
+
+    // 2) ÖZELLİKLER
+    if tenant.features && tenant.features.length
+        section.py-5.bg-white
+            .container.py-3
+                .row.text-center.g-4
+                    each f in tenant.features
+                        .col-6.col-md-3
+                            i.bi.attr-icon(class=f.icon)
+                            h3.h6.fw-bold.text-dark= f.title
+
+    // 3) KAMPANYALAR
+    if tenant.campaigns && tenant.campaigns.items && tenant.campaigns.items.length
+        section.py-5.bg-light
+            .container.py-4
+                .text-center.mb-5
+                    h2.section-title= tenant.campaigns.title
+                    if tenant.campaigns.subtitle
+                        p.text-muted.mt-3= tenant.campaigns.subtitle
+                .row.g-4.justify-content-center
+                    each camp in tenant.campaigns.items
+                        .col-md-4
+                            .card.price-card.h-100.p-4.text-center
+                                h3.h5.fw-bold.mb-3= camp.route
+                                .mb-4
+                                    if camp.oldPrice
+                                        span.old-price.me-2= camp.oldPrice + "₺"
+                                    span.new-price= camp.newPrice
+                                        small.fs-5 ₺
+                                if camp.features && camp.features.length
+                                    ul.list-unstyled.feature-list.text-start.mx-auto.mb-0(style="max-width: 180px;")
+                                        each feat, i in camp.features
+                                            li(class=i < camp.features.length - 1 ? "mb-2" : "")
+                                                i.bi.bi-check-circle-fill
+                                                span.text-muted= feat
+
+    // 4) POPÜLER ŞEHİRLER
+    if tenant.popularCities && tenant.popularCities.length
+        section.py-3.bg-light
+            .container.py-4
+                .text-center.mb-5
+                    h2.section-title POPÜLER ŞEHİRLER
+                .row.g-3
+                    each city in tenant.popularCities
+                        .col-md-6
+                            a.card.city-card.small.text-white.text-decoration-none(href=city.href || "#")
+                                img.card-img(src=city.image alt=city.title loading="lazy")
+                                .card-img-overlay.city-card-overlay.d-flex.justify-content-center
+                                    h3.h5.mb-0.fw-bold.text-white.text-shadow= city.title
+
+    // 5) DURAKLAR (API)
+    if cities && cities.length
+        section.py-5.bg-white
+            .container.py-4
+                .text-center.mb-5
+                    h2.section-title DURAKLARIMIZ
+                    p.text-muted.mt-3 Yolcularımızı güvenle ulaştırdığımız tüm il ve ilçe duraklarımız.
+                .d-flex.flex-wrap.justify-content-center.gap-3.mt-4
+                    each c in cities
+                        span.btn.btn-outline-primary.rounded-pill.px-4.py-2.fw-medium(style="cursor: default;")
+                            i.bi.bi-geo-alt-fill.me-2
+                            | #{c.title}
+
+    // 6) FAQ
+    if tenant.faq && tenant.faq.length
+        section.py-5.bg-light
+            .container.py-4
+                .text-center.mb-5
+                    h2.section-title SIKÇA SORULAN SORULAR
+                    p.text-muted.mt-3 Yolcularımızın en çok merak ettiği konular ve seyahat kurallarımız.
+                
+                .row.justify-content-center
+                    .col-lg-8
+                        .accordion.accordion-flush.shadow-sm.rounded-4.border.overflow-hidden.bg-white#seoFaq
+                            each item, index in tenant.faq
+                                .accordion-item.border-bottom
+                                    h3.accordion-header
+                                        button.accordion-button.collapsed.fw-bold.text-dark(type="button" data-bs-toggle="collapse" data-bs-target=`#faq${index}` aria-expanded="false")= item.q
+                                    div(id=`faq${index}` class="accordion-collapse collapse" data-bs-parent="#seoFaq")
+                                        .accordion-body.text-muted.lh-lg= item.a
+
+    // 7) GÜVEN ROZETLERİ
+    if tenant.trustBadges && tenant.trustBadges.length
+        section.py-5.bg-white
+            .container.py-3
+                .row.g-4
+                    each badge in tenant.trustBadges
+                        .col-md-4.d-flex.align-items-start.justify-content-center.justify-content-md-start
+                            .attr-icon.me-3
+                                i.bi(class=badge.icon)
+                            div
+                                h4.h6.fw-bold.text-dark= badge.title
+                                p.small.text-muted.mb-0= badge.text
+
+block js
+    if tenant.faq && tenant.faq.length
+        script(type="application/ld+json")!= tenant.faqJsonLd
