@@ -6,7 +6,7 @@ document.querySelectorAll('.searchable-select').forEach(wrapper => {
     const box = document.createElement('div');
     box.className = 'ss-main';
     box.innerHTML = `
-      <button class="ss-toggle form-control text-start" aria-haspopup="listbox" aria-expanded="false">${ph}</button>
+      <button type="button" class="ss-toggle form-control text-start" aria-haspopup="listbox" aria-expanded="false">${ph}</button>
       <div class="ss-dropdown" role="listbox">
         <input class="ss-search form-control form-control-sm" type="text" placeholder="Ara..." autocomplete="off">
         <ul class="ss-list list-unstyled mb-0"></ul>
@@ -68,7 +68,10 @@ document.querySelectorAll('.searchable-select').forEach(wrapper => {
         selected = 0;
     }
 
-    toggle.addEventListener('click', () => drop.classList.contains('show') ? close() : open());
+    toggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        drop.classList.contains('show') ? close() : open();
+    });
 
     search.addEventListener('input', e => {
         filtered = items.filter(it => it.text.toLowerCase().includes(e.target.value.toLowerCase()));
