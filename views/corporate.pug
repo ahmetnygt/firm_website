@@ -72,14 +72,6 @@ block css
             color: white;
             transform: scale(1.1);
         }
-        
-        .corporate-image-wrapper {
-            border-radius: 1rem;
-            overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            margin-bottom: 3rem;
-            border: 1px solid #eaeaea;
-        }
 
         .accordion-button:not(.collapsed) {
             color: var(--accent-color);
@@ -102,9 +94,6 @@ block content
             .col-lg-10
                 .text-center
                     h2.section-title= tenant.legalName
-                    
-                .corporate-image-wrapper
-                    img.img-fluid.w-100(src=tenant.corporateImage alt=`${tenant.name} Kurumsal Otobüs Filosu` style="height: 450px; object-fit: cover;")
                     
                 .corporate-content.text-center.mb-5.px-md-4
                     p.mb-4= tenant.corporate.intro

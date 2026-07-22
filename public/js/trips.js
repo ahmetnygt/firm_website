@@ -93,7 +93,7 @@ function renderGoturSeats($container, planBinary, tickets, tripId) {
     $container.append($driverCol);
 
     rows.forEach((rowData) => {
-        const $colDiv = $('<div class="d-flex flex-column gap-1"></div>');
+        const $colDiv = $('<div class="d-flex flex-column-reverse gap-1"></div>');
 
         for (let s = 0; s < rowData.length; s++) {
             const char = rowData[s];
